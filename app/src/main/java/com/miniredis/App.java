@@ -3,12 +3,17 @@
  */
 package com.miniredis;
 
+import java.net.*;
+import java.io.*;
 
 public class App {
     public String getGreeting() {
         return "Hello World!";
     }
 
+    public void initialConnection(){
+
+    }
     public static void main(String[] args) {
         System.out.println(new App().getGreeting());
     }
