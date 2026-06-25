@@ -1,8 +1,6 @@
 package com.miniredis;
 import java.net.*;
 
-import javax.tools.StandardJavaFileManager;
-
 import java.io.*;
 class MiniRedisServer {
     private Socket curClient;
@@ -13,10 +11,7 @@ class MiniRedisServer {
 
     public boolean start(){
         try{
-            redisServer = new ServerSocket(9999);
-            curClient = null;
-            output = new PrintWriter(curClient.getOutputStream(),true);
-            input = new BufferedReader(new InputStreamReader(curClient.getInputStream()));
+            redisServer = new ServerSocket(6380);
             return true;
             
         }catch (Exception e){
@@ -24,4 +19,19 @@ class MiniRedisServer {
             return false;
         }
     }
+
+    public boolean connect(){
+        try{
+            System.out.println("Waiting for a client for Three way Handshake.");
+            curClient = redisServer.accept();
+            System.out.println("Client is Detected.");
+            output = new PrintWriter(curClient.getOutputStream(),true);
+            input = new BufferedReader(new InputStreamReader(curClient.getInputStream()));
+            System.out.println("Client connected successfully at Port: " + curClient.getPort());
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+    }
+
 }
