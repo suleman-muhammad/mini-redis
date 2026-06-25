@@ -35,4 +35,14 @@ class MiniRedisServer {
         }
     }
 
+    public boolean sendMessage(String msg){
+        if(curClient == null){
+            System.out.println("No Client is Connected.");
+            return false;
+        }
+        output.println(msg);
+        System.out.println("Message Sent Successfully to the Connected Client.");
+        return true;
+    }
+
 }
