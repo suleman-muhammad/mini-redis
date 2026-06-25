@@ -45,4 +45,19 @@ class MiniRedisServer {
         return true;
     }
 
+    public String recieveMessage(){
+        if(curClient == null){
+            System.out.println("No Client is Connected.Returning NULL.");
+            return null;
+        }
+
+        try{
+            String msg = input.readLine();
+            return msg;
+        }catch (Exception e){
+            System.out.println("Something bad happened while receiving from Client.Returning NULL.");
+            return null;
+        }
+    }
+
 }
