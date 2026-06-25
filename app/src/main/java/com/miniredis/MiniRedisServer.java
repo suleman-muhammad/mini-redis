@@ -60,11 +60,33 @@ class MiniRedisServer {
         }
     }
 
-    public void stop() throws Exception{
-        output.close();
-        input.close();
-        curClient.close();
-        redisServer.close();
+    public void stop(){
+        try{
+            output.close();
+            input.close();
+            curClient.close();
+            redisServer.close();
+        }catch (Exception e){
+            
+        }
     }
 
+    public static void main(String[] args) {
+        MiniRedisServer redisServer = new MiniRedisServer();
+        if(!redisServer.start()){
+            System.out.println("Testing Failed.");
+            return;
+        }
+
+        if(!redisServer.connect()){
+            System.out.println("Could not Connect to clinet testing Failed.");
+            return;
+        }
+
+        String msg = redisServer.recieveMessage();
+        System.out.println("Received: "+ msg);
+        System.out.println("Responding: " + msg);
+        redisServer.sendMessage(msg);
+        redisServer.stop();
+    }
 }
