@@ -6,8 +6,8 @@ public class GreetingsClinetTest {
     @Test
     public void givenGreetingClient_whenServerRespondsWhenStarted_thenCorrect() throws Exception{
         GreetingsClient client = new GreetingsClient();
-        client.startConnection("127.0.0.1", 9999);
+        client.startConnection("127.0.0.1", 6380);
         String response = client.sendMessage("hello server");
-        assertEquals("hello client", response);
+        assertEquals("hello server", response);
     }
 }
