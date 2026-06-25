@@ -60,4 +60,11 @@ class MiniRedisServer {
         }
     }
 
+    public void stop() throws Exception{
+        output.close();
+        input.close();
+        curClient.close();
+        redisServer.close();
+    }
+
 }
