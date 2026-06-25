@@ -12,6 +12,7 @@ class MiniRedisServer {
     public boolean start(){
         try{
             redisServer = new ServerSocket(6380);
+            System.out.println("Server is Started at Port: " + 6380);
             return true;
             
         }catch (Exception e){
