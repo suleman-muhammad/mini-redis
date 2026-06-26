@@ -74,19 +74,26 @@ class MiniRedisServer {
     public static void main(String[] args) {
         MiniRedisServer redisServer = new MiniRedisServer();
         if(!redisServer.start()){
-            System.out.println("Testing Failed.");
+            System.out.println("Program Failed.");
             return;
         }
-
-        if(!redisServer.connect()){
-            System.out.println("Could not Connect to clinet testing Failed.");
-            return;
+        while(true){
+            if(!redisServer.connect()){
+                System.out.println("Could not Connect to clinet Program Failed.");
+                break;
+            }
+            String msg;
+            try{
+                while((msg = redisServer.input.readLine()) != null){
+                    System.out.println("Received: "+ msg);
+                    System.out.println("Responding: " + msg);
+                    redisServer.sendMessage(msg);
+                }
+            }catch(IOException e){
+                System.out.println("REading Failed. Exiting Program.");
+                break;
+            }
         }
-
-        String msg = redisServer.recieveMessage();
-        System.out.println("Received: "+ msg);
-        System.out.println("Responding: " + msg);
-        redisServer.sendMessage(msg);
         redisServer.stop();
     }
 }
