@@ -97,9 +97,22 @@ class MiniRedisServer {
         // redisServer.stop();
 
         // ServerSocket myRedis;
-        try(ServerSocket myRedis = new ServerSocket()){
-            
+        try(ServerSocket myRedis = new ServerSocket(6380)){
+            System.out.println("Server is Ready and Running on Port: " + 6380);
+            while(true){
+                Socket client = myRedis.accept();
 
+                try(BufferedReader input = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                    PrintWriter out =  new PrintWriter(client.getOutputStream(),true)){
+                        
+                    String msg;
+                    while((msg = input.readLine()) != null){
+                        System.out.println("Received: " + msg);
+                        out.println(msg);
+                        System.out.println("Sent: " + msg);
+                    }
+                }
+            }
         }catch(IOException e){
 
         }catch(Exception e){

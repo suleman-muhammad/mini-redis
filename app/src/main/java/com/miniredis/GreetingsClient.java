@@ -37,26 +37,35 @@ public class GreetingsClient {
         GreetingsClient client = new GreetingsClient();
 
         try{
-            client.startConnection("127.0.0.0",6380);
+            client.startConnection("127.0.0.1",6380);
+            
         }catch (Exception e){
+            System.out.println("Failed.");
             return;
         }
 
-        for (String msg: msgs){
-            
+        for (String msg: msgs){  
             try{
                 System.out.println("Sending: " + msg);
-                client.sendMessage(msg);
-                String response = client.reader.readLine();
+                String response = client.sendMessage(msg);
                 System.out.println("Response: " + response);
                 Thread.sleep(1000);
             }catch (InterruptedException e){
+                e.printStackTrace();
                 return;
             }catch (IOException e){
+                e.printStackTrace();
                 return;
             }catch (Exception e){
+                e.printStackTrace();
                 return;
             }
         }
+        // try{
+        //     client.StopConnection();
+        // }catch(Exception e){
+        //     e.printStackTrace();
+        //     return;
+        // }
     }
 }
