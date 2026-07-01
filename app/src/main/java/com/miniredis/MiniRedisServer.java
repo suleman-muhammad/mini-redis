@@ -98,8 +98,9 @@ class MiniRedisServer {
 
         // ServerSocket myRedis;
         try(ServerSocket myRedis = new ServerSocket(6380)){
-            System.out.println("Server is Ready and Running on Port: " + 6380);
+            System.out.println("Server: Ready and Running on Port: " + 6380);
             while(true){
+                System.out.println("Server: waiting for a client.");
                 Socket client = myRedis.accept();
 
                 try(BufferedReader input = new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -107,9 +108,9 @@ class MiniRedisServer {
                         
                     String msg;
                     while((msg = input.readLine()) != null){
-                        System.out.println("Received: " + msg);
+                        System.out.println("Server: Received: " + msg);
                         out.println(msg);
-                        System.out.println("Sent: " + msg);
+                        System.out.println("Server: Sent: " + msg);
                     }
                 }
             }
