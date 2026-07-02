@@ -74,7 +74,10 @@ class MiniRedisServer {
     public static String handleSet(String cmds, Store store){
         return null;
     }
-    
+    public static String handleGet(String cmds, Store store){
+        return null;
+    }
+
 
     public static String handleCommand(String msg,Store Store){
         String[] cmds = msg.split(" ");
