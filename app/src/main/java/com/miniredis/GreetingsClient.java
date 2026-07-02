@@ -61,11 +61,11 @@ public class GreetingsClient {
                 return;
             }
         }
-        // try{
-        //     client.StopConnection();
-        // }catch(Exception e){
-        //     e.printStackTrace();
-        //     return;
-        // }
+        try{
+            client.StopConnection();
+        }catch(Exception e){
+            e.printStackTrace();
+            return;
+        }
     }
 }
