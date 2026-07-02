@@ -71,16 +71,21 @@ class MiniRedisServer {
         }
     }
 
-    public String handleCommand(String msg){
+    public static String handleSet(String cmds, Store store){
+        return null;
+    }
+    
+
+    public static String handleCommand(String msg,Store Store){
         String[] cmds = msg.split(" ");
         if(cmds.length == 0){
             return "Empty Command";
         }
-        
+
         String cmd = cmds[0].toUpperCase();
         return switch(cmd){
-            case "SET" -> handleSet(cmds);
-            case "GET" -> handleGet(cmds);
+            case "SET" -> handleSet(cmds,store);
+            case "GET" -> handleGet(cmds,store);
             case "PING" -> "PONG";
             default     -> "ERR unknown Command '" + cmd + "'"; 
         };
