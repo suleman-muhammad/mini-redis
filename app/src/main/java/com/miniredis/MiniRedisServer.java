@@ -71,6 +71,21 @@ class MiniRedisServer {
         }
     }
 
+    public String handleCommand(String msg){
+        String[] cmds = msg.split(" ");
+        if(cmds.length == 0){
+            return "Empty Command";
+        }
+        
+        String cmd = cmds[0].toUpperCase();
+        return switch(cmd){
+            case "SET" -> handleSet(cmds);
+            case "GET" -> handleGet(cmds);
+            case "PING" -> "PONG";
+            default     -> "ERR unknown Command '" + cmd + "'"; 
+        };
+    }
+
     public static void main(String[] args) {
         // MiniRedisServer redisServer = new MiniRedisServer();
         // if(!redisServer.start()){
@@ -101,7 +116,7 @@ class MiniRedisServer {
             System.out.println("Server: Ready and Running on Port: " + 6380);
             while(true){
                 System.out.println("Server: waiting for a client.");
-                try(Socket client = myRedis.accept();){
+                try(Socket client = myRedis.accept()){
                     try(BufferedReader input = new BufferedReader(new InputStreamReader(client.getInputStream()));
                         PrintWriter out =  new PrintWriter(client.getOutputStream(),true)){
                             
@@ -113,20 +128,14 @@ class MiniRedisServer {
                         }
                     }
                 }catch( IOException e){
-                    System.out.println("Could not find a client.");
+                    System.out.println("Server: client I/O error: " + e.getMessage());
                 }
             }
-        }catch(IOException e){
-            System.out.println("Server: could not initiate the server.");
-        }catch(Exception e){
-            System.out.println("Server: Could not initiate the Server.");
+        } catch (IOException e) {
+            System.err.println("Server: could not initiate: " + e.getMessage());
+            e.printStackTrace();
         }
 
         System.out.println("Server: Shutting Down.");
-        try{
-            Thread.sleep(1000);
-        }catch(InterruptedException e){
-            
-        }
     }
 }
