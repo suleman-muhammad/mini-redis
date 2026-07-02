@@ -101,23 +101,32 @@ class MiniRedisServer {
             System.out.println("Server: Ready and Running on Port: " + 6380);
             while(true){
                 System.out.println("Server: waiting for a client.");
-                Socket client = myRedis.accept();
-
-                try(BufferedReader input = new BufferedReader(new InputStreamReader(client.getInputStream()));
-                    PrintWriter out =  new PrintWriter(client.getOutputStream(),true)){
-                        
-                    String msg;
-                    while((msg = input.readLine()) != null){
-                        System.out.println("Server: Received: " + msg);
-                        out.println(msg);
-                        System.out.println("Server: Sent: " + msg);
+                try(Socket client = myRedis.accept();){
+                    try(BufferedReader input = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                        PrintWriter out =  new PrintWriter(client.getOutputStream(),true)){
+                            
+                        String msg;
+                        while((msg = input.readLine()) != null){
+                            System.out.println("Server: Received: " + msg);
+                            out.println(msg);
+                            System.out.println("Server: Sent: " + msg);
+                        }
                     }
+                }catch( IOException e){
+                    System.out.println("Could not find a client.");
                 }
             }
         }catch(IOException e){
-
+            System.out.println("Server: could not initiate the server.");
         }catch(Exception e){
+            System.out.println("Server: Could not initiate the Server.");
+        }
 
+        System.out.println("Server: Shutting Down.");
+        try{
+            Thread.sleep(1000);
+        }catch(InterruptedException e){
+            
         }
     }
 }
