@@ -85,8 +85,15 @@ class MiniRedisServer {
         return "Ok.";
     }
     public static String handleGet(String[] cmds, Store store){
-        
-        return null;
+        if(cmds.length != 2){
+            return "Get Command only takes 1 arguments.";
+        }
+        String key = cmds[1];
+        if(key.length() == 0){
+            return "Key cannot be empty.";
+        }
+        String val = store.get(key);
+        return val;
     }
 
 
