@@ -71,15 +71,26 @@ class MiniRedisServer {
         }
     }
 
-    public static String handleSet(String cmds, Store store){
-        return null;
+    public static String handleSet(String[] cmds, Store store){
+        if(cmds.length != 3){
+            return "Set Command only takes 2 arguments.";
+        }
+        String key = cmds[1];
+        String val = cmds[2];
+        if(key.length() == 0 || val.length() == 0){
+            return "Key or value cannot be empty.";
+        }
+
+        store.set(cmds[1], cmds[2]);
+        return "Ok.";
     }
-    public static String handleGet(String cmds, Store store){
+    public static String handleGet(String[] cmds, Store store){
+        
         return null;
     }
 
 
-    public static String handleCommand(String msg,Store Store){
+    public static String handleCommand(String msg,Store store){
         String[] cmds = msg.split(" ");
         if(cmds.length == 0){
             return "Empty Command";
