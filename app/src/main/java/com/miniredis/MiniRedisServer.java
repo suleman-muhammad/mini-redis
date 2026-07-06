@@ -93,6 +93,9 @@ class MiniRedisServer {
             return "Key cannot be empty.";
         }
         String val = store.get(key);
+        if(val == null){
+            return "No Value Found.";
+        }
         return val;
     }
 
@@ -138,6 +141,8 @@ class MiniRedisServer {
         // redisServer.stop();
 
         // ServerSocket myRedis;
+
+        Store store = new Store();
         try(ServerSocket myRedis = new ServerSocket(6380)){
             System.out.println("Server: Ready and Running on Port: " + 6380);
             while(true){
@@ -148,9 +153,11 @@ class MiniRedisServer {
                             
                         String msg;
                         while((msg = input.readLine()) != null){
-                            System.out.println("Server: Received: " + msg);
-                            out.println(msg);
-                            System.out.println("Server: Sent: " + msg);
+                            System.out.println("Client: " + msg);
+                            String result = handleCommand(msg, store);
+                            out.println(result);
+                            System.out.println("Server: " + result);
+
                         }
                     }
                 }catch( IOException e){

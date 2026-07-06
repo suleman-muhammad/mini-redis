@@ -33,7 +33,8 @@ public class GreetingsClient {
 
     public static void main(String[] args) {
 
-        String[] msgs = {"Hello","How are you..?", "Can you hear us..?","is Anyone there..?"};
+        // String[] msgs = {"Hello","How are you..?", "Can you hear us..?","is Anyone there..?"};
+        String[] msgs = {"PING","SET Chauhan Suleman","GET Suleman Chauhan"};
         GreetingsClient client = new GreetingsClient();
 
         try{
