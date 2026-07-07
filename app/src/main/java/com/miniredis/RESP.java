@@ -18,10 +18,18 @@ public class RESP {
 
 
     public List<String> readCommand() throws IOException{
-        Byte[] curBytes = new Byte[][1];
-        curBytes[0] = 
-
-        String curChar = new String(curBytes,StandardCharsets.UTF_8);
+        String cur = Integer.toBinaryString(in.read());
+        switch (cur) {
+            case "*":
+                handleArrays();
+                break;
+            case "$":
+                handleBulkString();
+                break;
+            default:
+                throw new IOException();
+                break;
+        }
         return null;
     }
 
