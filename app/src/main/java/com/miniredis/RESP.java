@@ -15,7 +15,6 @@ public class RESP {
     public List<String> readCommand() throws IOException{
         List<String> result = new ArrayList<>();
         String cur = Character.toString(in.read());
-        System.out.println("Read: " + cur);
         switch (cur) {
             case "*":
                 result = handleArrays();
