@@ -1,6 +1,6 @@
 package com.miniredis;
 import java.net.*;
-
+import java.util.List;
 import java.io.*;
 class MiniRedisServer {
     private Socket curClient;
@@ -71,24 +71,25 @@ class MiniRedisServer {
         }
     }
 
-    public static String handleSet(String[] cmds, Store store){
-        if(cmds.length != 3){
+    public static String handleSet(List<String> cmds, Store store){
+        if(cmds.size() != 3){
             return "Set Command only takes 2 arguments.";
         }
-        String key = cmds[1];
-        String val = cmds[2];
+        String key = cmds.get(1);
+        String val = cmds.get(2);
         if(key.length() == 0 || val.length() == 0){
             return "Key or value cannot be empty.";
         }
 
-        store.set(cmds[1], cmds[2]);
+        store.set(key, val);
         return "Ok.";
     }
-    public static String handleGet(String[] cmds, Store store){
-        if(cmds.length != 2){
+
+    public static String handleGet(List<String> cmds, Store store){
+        if(cmds.size() != 2){
             return "Get Command only takes 1 arguments.";
         }
-        String key = cmds[1];
+        String key = cmds.get(1);
         if(key.length() == 0){
             return "Key cannot be empty.";
         }
@@ -100,13 +101,13 @@ class MiniRedisServer {
     }
 
 
-    public static String handleCommand(String msg,Store store){
-        String[] cmds = msg.split(" ");
-        if(cmds.length == 0){
+    public static String handleCommand(List<String> cmds,Store store){
+
+        if(cmds.size() == 0){
             return "Empty Command";
         }
 
-        String cmd = cmds[0].toUpperCase();
+        String cmd = cmds.getFirst().toUpperCase();
         return switch(cmd){
             case "SET" -> handleSet(cmds,store);
             case "GET" -> handleGet(cmds,store);
@@ -148,17 +149,10 @@ class MiniRedisServer {
             while(true){
                 System.out.println("Server: waiting for a client.");
                 try(Socket client = myRedis.accept()){
-                    try(BufferedReader input = new BufferedReader(new InputStreamReader(client.getInputStream()));
-                        PrintWriter out =  new PrintWriter(client.getOutputStream(),true)){
-                            
-                        String msg;
-                        while((msg = input.readLine()) != null){
-                            System.out.println("Client: " + msg);
-                            String result = handleCommand(msg, store);
-                            out.println(result);
-                            System.out.println("Server: " + result);
-
-                        }
+                    // BufferedReader input = new BufferedReader(new InputStreamReader(client.getInputStream())
+                    try(PrintWriter out =  new PrintWriter(client.getOutputStream(),true)){
+                        RESP input = new RESP(client.getInputStream());
+                        
                     }
                 }catch( IOException e){
                     System.out.println("Server: client I/O error: " + e.getMessage());
