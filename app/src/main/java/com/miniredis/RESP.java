@@ -7,6 +7,8 @@ import java.io.UTFDataFormatException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import javax.imageio.IIOException;
+
 import com.google.common.base.Utf8;
 
 public class RESP {
@@ -37,8 +39,13 @@ public class RESP {
     public List<String> handleArrays() throws IOException{
         List<String> result = new ArrayList<>();
         int total = Integer.parseInt(Integer.toBinaryString(in.read()));
-        //TODO:
-        // discard the extra \r\n.
+        
+        int cr = in.read();
+        int lf = in.read();
+        if(cr != '\r' || lf != '\n'){
+            throw new IOException("ERR UnKnown Pattern.");
+        }
+        
         for(int i = 0; i<total; i++){
             String cur = Integer.toBinaryString(in.read());
             switch (cur) {
@@ -53,16 +60,26 @@ public class RESP {
                     throw new IOException();
             } 
         }
-        //TODO:
-        // discard the extra \r\n.
+        
+        cr = in.read();
+        lf = in.read();
+        if(cr != '\r' || lf != '\n'){
+            throw new IOException("ERR UnKnown Pattern.");
+        }
+
         return result;    
     }
 
     public String handleBulkString() throws IOException{
         StringBuilder sb = new StringBuilder();
         int total = Integer.parseInt(Integer.toBinaryString(in.read()));
-        //TODO:
-        // discard the extra \r\n.
+        
+        int cr = in.read();
+        int lf = in.read();
+        if(cr != '\r' || lf != '\n'){
+            throw new IOException("ERR UnKnown Pattern.");
+        }
+
         for(int i = 0; i<total; i++){
             int cur = in.read();
             if (cur == -1){
@@ -71,8 +88,13 @@ public class RESP {
 
             sb.append(Integer.toBinaryString(cur));
         }
-        //TODO:
-        // discard the extra \r\n.
+
+        cr = in.read();
+        lf = in.read();
+        if(cr != '\r' || lf != '\n'){
+            throw new IOException("ERR UnKnown Pattern.");
+        }
+
         return sb.toString();
     }
 
