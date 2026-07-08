@@ -152,7 +152,17 @@ class MiniRedisServer {
                     // BufferedReader input = new BufferedReader(new InputStreamReader(client.getInputStream())
                     try(PrintWriter out =  new PrintWriter(client.getOutputStream(),true)){
                         RESP input = new RESP(client.getInputStream());
-                        
+                        try{    
+                            while(true){
+                                List<String> msg = input.readCommand();
+                                System.out.println("Client: " + msg);
+                                String result = handleCommand(msg, store);
+                                out.println(result);
+                                System.out.println("Server: " + result);
+                            }
+                        }catch (IOException e){
+                            e.printStackTrace();
+                        }
                     }
                 }catch( IOException e){
                     System.out.println("Server: client I/O error: " + e.getMessage());
