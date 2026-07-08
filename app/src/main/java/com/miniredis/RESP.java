@@ -18,20 +18,20 @@ public class RESP {
 
 
     public List<String> readCommand() throws IOException{
+        List<String> result = new ArrayList<>();
         String cur = Integer.toBinaryString(in.read());
         //TODO: 
         // handle result.
         switch (cur) {
             case "*":
-                handleArrays();
-                break;
+                result = handleArrays();
+                return result;
             case "$":
-                handleBulkString();
-                break;
+                result.add(handleBulkString());
+                return result;
             default:
                 throw new IOException();
         }
-        return null;
     }
 
     public List<String> handleArrays() throws IOException{
@@ -43,8 +43,8 @@ public class RESP {
             String cur = Integer.toBinaryString(in.read());
             switch (cur) {
                 case "*":
-                    handleArrays();
-                    //TODO: handle the Array Result.
+                    List<String> r1 = handleArrays();
+                    result.addAll(r1);
                     break;
                 case "$":
                     result.add(handleBulkString());
@@ -55,7 +55,7 @@ public class RESP {
         }
         //TODO:
         // discard the extra \r\n.
-        return null;    
+        return result;    
     }
 
     public String handleBulkString() throws IOException{
@@ -73,7 +73,7 @@ public class RESP {
         }
         //TODO:
         // discard the extra \r\n.
-        return null;
+        return sb.toString();
     }
 
 
