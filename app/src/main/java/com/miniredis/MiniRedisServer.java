@@ -150,6 +150,7 @@ class MiniRedisServer {
                 System.out.println("Server: waiting for a client.");
                 try(Socket client = myRedis.accept()){
                     // BufferedReader input = new BufferedReader(new InputStreamReader(client.getInputStream())
+                    System.out.println("Server: Client Connected Successfully.");
                     try(PrintWriter out =  new PrintWriter(client.getOutputStream(),true)){
                         RESP input = new RESP(client.getInputStream());
                         try{    
@@ -162,6 +163,10 @@ class MiniRedisServer {
                             }
                         }catch (IOException e){
                             e.printStackTrace();
+                            
+                        }catch(Exception e){
+                            e.printStackTrace();
+                            System.out.println("Server: Client Disconnected.");
                         }
                     }
                 }catch( IOException e){
