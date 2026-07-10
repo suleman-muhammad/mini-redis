@@ -1,24 +1,25 @@
 package com.miniredis;
 
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.io.*;
 
 public class GreetingsClient {
     
     private Socket clinetSocket;
-    private PrintWriter writer;
+    private OutputStream writer;
     private BufferedReader reader;
 
 
 
     public void startConnection(String ip, int port) throws Exception{
         clinetSocket = new Socket(ip,port);
-        writer = new PrintWriter(clinetSocket.getOutputStream(),true);
+        writer = clinetSocket.getOutputStream();
         reader = new BufferedReader(new InputStreamReader(clinetSocket.getInputStream()));
     }
 
     public String sendMessage(String msg) throws Exception{
-        writer.println(msg);
+        writer.write(msg.getBytes(StandardCharsets.UTF_8));
         String response = reader.readLine();
         return response;
     }
