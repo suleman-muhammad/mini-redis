@@ -14,12 +14,12 @@ public class RESP {
 
     public List<String> readCommand() throws IOException{
         List<String> result = new ArrayList<>();
-        String cur = Character.toString(in.read());
+        int cur = in.read();
         switch (cur) {
-            case "*":
+            case '*':
                 result = handleArrays();
                 return result;
-            case "$":
+            case '$':
                 result.add(handleBulkString());
                 return result;
             default:
@@ -38,13 +38,13 @@ public class RESP {
         }
 
         for(int i = 0; i<total; i++){
-            String cur = Character.toString(in.read());
+            int cur = in.read();
             switch (cur) {
-                case "*":
+                case '*':
                     List<String> r1 = handleArrays();
                     result.addAll(r1);
                     break;
-                case "$":
+                case '$':
                     result.add(handleBulkString());
                     break;
                 default:
@@ -52,11 +52,11 @@ public class RESP {
             } 
         }
         
-        cr = in.read();
-        lf = in.read();
-        if(cr != '\r' || lf != '\n'){
-            throw new IOException("ERR UnKnown Pattern.");
-        }
+        // cr = in.read();
+        // lf = in.read();
+        // if(cr != '\r' || lf != '\n'){
+        //     throw new IOException("ERR UnKnown Pattern.");
+        // }
 
         return result;    
     }
