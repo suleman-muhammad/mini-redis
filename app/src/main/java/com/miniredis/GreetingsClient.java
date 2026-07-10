@@ -36,7 +36,7 @@ public class GreetingsClient {
     public static void main(String[] args) {
 
         // String[] msgs = {"Hello","How are you..?", "Can you hear us..?","is Anyone there..?"};
-        String[] msgs = {"$4\r\nPING\r\n","*3\r\n$3\r\nSET\r\n$7\r\nChauhan\r\n$7\r\nSuleman\r\n","*2\r\n$3\r\nGET\r\n$7\r\nChauhan\r\n"};
+        String[] msgs = {"*1\r\n$4\r\nPING\r\n","*3\r\n$3\r\nSET\r\n$7\r\nChauhan\r\n$7\r\nSuleman\r\n","*2\r\n$3\r\nGET\r\n$7\r\nChauhan\r\n"};
         GreetingsClient client = new GreetingsClient();
 
         try{
