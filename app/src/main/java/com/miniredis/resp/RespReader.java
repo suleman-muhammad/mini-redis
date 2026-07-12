@@ -4,10 +4,10 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-public class RESP {
+public class RespReader {
     private DataInputStream in;
 
-    public RESP(InputStream in){
+    public RespReader(InputStream in){
         this.in = new DataInputStream(in);
     }
 
