@@ -7,7 +7,7 @@ import java.util.*;
 public class RESP {
     private DataInputStream in;
 
-    RESP(InputStream in){
+    public RESP(InputStream in){
         this.in = new DataInputStream(in);
     }
 
