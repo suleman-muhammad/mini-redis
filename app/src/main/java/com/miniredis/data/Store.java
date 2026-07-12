@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class Store {
     private Map<String,String> data;
-    Store(){
+    public Store(){
         data = new HashMap<>();
     }
     public void set(String key, String val){
