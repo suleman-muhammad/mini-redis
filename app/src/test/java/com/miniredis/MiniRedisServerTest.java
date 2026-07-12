@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import com.miniredis.data.Store;
+
 public class MiniRedisServerTest {
     
     @Test

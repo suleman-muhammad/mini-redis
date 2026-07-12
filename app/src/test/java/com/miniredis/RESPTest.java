@@ -9,6 +9,8 @@ import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.miniredis.resp.RESP;
+
 public class RESPTest {
 
     private RESP resp;

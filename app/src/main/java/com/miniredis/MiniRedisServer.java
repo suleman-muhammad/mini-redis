@@ -3,6 +3,7 @@ import java.net.*;
 import java.util.List;
 
 import com.miniredis.data.Store;
+import com.miniredis.resp.RESP;
 
 import java.io.*;
 class MiniRedisServer {
