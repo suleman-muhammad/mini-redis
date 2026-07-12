@@ -18,7 +18,7 @@ public class ClientHandler {
         this.writer = new RespWriter(client.getOutputStream());
     }
     
-    public void handleClient(Socket client){
+    public void handleClient(){
         System.out.println("Server: Connected a new Client.");
 
     }
