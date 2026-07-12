@@ -18,6 +18,8 @@ public class Server {
             System.out.println("Server: Started at Port " + this.port);
             while(true){
                 Socket client = miniServer.accept();
+                ClientHandler handler = new ClientHandler();
+                handler.handleClient(client);
             }
         }catch(IOException e){
 
