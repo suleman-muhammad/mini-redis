@@ -1,7 +1,7 @@
 package com.miniredis.resp;
 
 public abstract class Response {
-    private String response;
+    protected String response;
     public abstract String getResponse();
-    
+
 } 
