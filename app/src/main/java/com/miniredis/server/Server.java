@@ -25,7 +25,7 @@ public class Server {
                 handler.handleClient();
             }
         }catch(IOException e){
-
+            System.out.println("Server: cannot Start the server.");
         }
     }
 }
