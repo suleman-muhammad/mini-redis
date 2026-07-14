@@ -11,12 +11,12 @@ public class RespWriter {
         this.output = output;
     }
 
-    public void write(Response r){
+    public void write(Response r) throws IOException{
         try{
             output.write(r.getResponse().getBytes(StandardCharsets.UTF_8));
             output.flush();
         }catch (IOException e){
-            //TODO
+            throw new IOException("Failed to send Response + " + r.getClass().getSimpleName(),e);
         }
     }
 }
