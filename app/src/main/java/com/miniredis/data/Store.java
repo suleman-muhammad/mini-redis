@@ -15,4 +15,12 @@ public class Store {
     public String get(String key){
         return data.getOrDefault(key,null);
     }
+
+    public boolean del(String key){
+        return data.remove(key) != null;
+    }
+
+    public boolean exists(String key){
+        return data.containsKey(key);
+    }
 }
