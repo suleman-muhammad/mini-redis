@@ -34,7 +34,7 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = 'mini.redis.App'
+    mainClass = 'com.miniredis.Main'
 }
 
 tasks.named('test') {
