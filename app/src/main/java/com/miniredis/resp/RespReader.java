@@ -22,6 +22,8 @@ public class RespReader {
             case '$':
                 result.add(handleBulkString());
                 return result;
+            case -1:
+                return null;
             default:
                 throw new IOException();
         }
