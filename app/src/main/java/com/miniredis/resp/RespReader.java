@@ -45,19 +45,19 @@ public class RespReader {
 
         if(total > MAX_ARRAY_LENGTH){
             throw new IOException(
-                "PROTOCOL Error: Array length exceeds limit."
+                "PROTOCOL Error: Array length exceeds limit " + total  
             );
         }
         if(total < 0){
             throw new IOException(
-                "PROTOCOL Error: Array length must be Positive."
+                "PROTOCOL Error: Array length must be Positive " + total
             );
         }
 
         int cr = in.read();
         int lf = in.read();
         if(cr != '\r' || lf != '\n'){
-            throw new IOException("ERR UnKnown Pattern.");
+            throw new IOException("ERR UnKnown Pattern: Expected CRLF after length of Array, got \" + cr + \"  \" + lf");
         }
 
         for(int i = 0; i<total; i++){
@@ -71,7 +71,7 @@ public class RespReader {
                     result.add(handleBulkString());
                     break;
                 case -1:
-                    throw new EOFException();
+                    throw new EOFException("Protocol Error: Client Disconnected.");
                 default:
                     throw new IOException("ERR Unknown Pattern.");
             } 
@@ -99,37 +99,46 @@ public class RespReader {
         
         if(total > MAX_BULK_STRING_LENGTH){
             throw new IOException(
-                "PROTOCOL Error: bulk String length exceeds limit."
+                "PROTOCOL Error: bulk String length exceeds limit " + total
             );
         }
 
         if(total < -1){
             throw new IOException(
-                "PROTOCOL Error: bulk String length cannot be less than -1."
+                "PROTOCOL Error: bulk String length is invalid " + total
             );
         }
-
-        
 
         int cr = in.read();
         int lf = in.read();
         if(cr != '\r' || lf != '\n'){
-            throw new IOException("ERR UnKnown Pattern.");
+            throw new IOException("ERR UnKnown Pattern: Expected CRLF after length of Bulk String, got \" + cr + \"  \" + lf");
         }
 
-        for(int i = 0; i<total; i++){
-            int cur = in.read();
-            if (cur == -1){
-                throw new EOFException();
-            }
+        // for(int i = 0; i<total; i++){
+        //     int cur = in.read();
+        //     if (cur == -1){
+        //         throw new EOFException();
+        //     }
 
+        //     sb.append(Character.toString(cur));
+        // }
+
+        byte[] data = new byte[total];
+        try{
+            in.readFully(data);
+        }catch (EOFException e){
+            throw new EOFException("Protocol error: Expected " + total + " bytes but coulc not fetch.");
+        }
+
+        for(byte cur : data){
             sb.append(Character.toString(cur));
         }
 
         cr = in.read();
         lf = in.read();
         if(cr != '\r' || lf != '\n'){
-            throw new IOException("ERR UnKnown Pattern.");
+            throw new IOException("ERR UnKnown Pattern: Expected CRLF after Bulk String, got " + cr + "  " + lf);
         }
 
         return sb.toString();
