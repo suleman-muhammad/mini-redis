@@ -14,7 +14,7 @@ public class RespWriter {
     public void write(Response r){
         try{
             output.write(r.getResponse().getBytes(StandardCharsets.UTF_8));
-        
+            output.flush();
         }catch (IOException e){
             //TODO
         }
