@@ -42,7 +42,7 @@ public class CommandRouter {
     }
 
 
-    public String handleCommand(List<String> cmds){
+    public String handle(List<String> cmds){
 
         if(cmds.size() == 0){
             return "Empty Command";
