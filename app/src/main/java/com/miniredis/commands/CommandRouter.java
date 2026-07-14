@@ -2,12 +2,8 @@ package com.miniredis.commands;
 
 import java.util.List;
 
-import com.miniredis.data.Store;
-import com.miniredis.resp.BulkString;
-import com.miniredis.resp.ErrorString;
-import com.miniredis.resp.NullString;
-import com.miniredis.resp.Response;
-import com.miniredis.resp.SimpleString;
+import com.miniredis.data.*;
+import com.miniredis.resp.*;
 
 public class CommandRouter {
     
@@ -28,16 +24,16 @@ public class CommandRouter {
         }
 
         store.set(key, val);
-        return new SimpleString("Ok.");
+        return new SimpleString("OK");
     }
 
     public Response handleGet(List<String> cmds){
         if(cmds.size() != 2){
-            return new ErrorString("Err Get Command only takes 1 arguments.");
+            return new ErrorString("Err Get Command only takes 1 arguments");
         }
         String key = cmds.get(1);
         if(key.length() == 0){
-            return new ErrorString("Err Key cannot be empty.");
+            return new ErrorString("Err Key cannot be empty");
         }
         String val = store.get(key);
         if(val == null){
@@ -49,7 +45,7 @@ public class CommandRouter {
 
     public Response handle(List<String> cmds){
 
-        if(cmds.size() == 0){
+        if(cmds.isEmpty()){
             return new ErrorString("ERR Empty Command");
         }
 
