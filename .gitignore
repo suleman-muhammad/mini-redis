@@ -35,3 +35,7 @@ local.properties
 
 
 app/bin/*
+
+
+*.class
+target/
