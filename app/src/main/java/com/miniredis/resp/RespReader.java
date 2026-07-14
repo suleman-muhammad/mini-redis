@@ -5,6 +5,8 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+
+import com.miniredis.exceptions.ProtocolException;
 public class RespReader {
     private static final int MAX_BULK_STRING_LENGTH = 512 * 1024 * 1024;
     private static final int MAX_ARRAY_LENGTH = 1024 * 1024;
@@ -40,16 +42,16 @@ public class RespReader {
         try{
             total = Integer.parseInt(len);
         }catch(NumberFormatException e){
-            throw new IOException("Protocol error: invlaid length " + len,e);
+            throw new ProtocolException("Protocol error: invlaid length " + len);
         }
 
         if(total > MAX_ARRAY_LENGTH){
-            throw new IOException(
+            throw new ProtocolException(
                 "PROTOCOL Error: Array length exceeds limit " + total  
             );
         }
         if(total < 0){
-            throw new IOException(
+            throw new ProtocolException(
                 "PROTOCOL Error: Array length must be Positive " + total
             );
         }
@@ -57,7 +59,7 @@ public class RespReader {
         int cr = in.read();
         int lf = in.read();
         if(cr != '\r' || lf != '\n'){
-            throw new IOException("ERR UnKnown Pattern: Expected CRLF after length of Array, got \" + cr + \"  \" + lf");
+            throw new ProtocolException("Protocol error: Expected CRLF after length of Array, got \" + cr + \"  \" + lf");
         }
 
         for(int i = 0; i<total; i++){
@@ -73,7 +75,7 @@ public class RespReader {
                 case -1:
                     throw new EOFException("Protocol Error: Client Disconnected.");
                 default:
-                    throw new IOException("ERR Unknown Pattern.");
+                    throw new ProtocolException("Protocol error: unknown byte + " + cur);
             } 
         }
         
@@ -94,17 +96,17 @@ public class RespReader {
         try{
             total = Integer.parseInt(len);
         }catch(NumberFormatException e){
-            throw new IOException("Protocol error: invlaid length " + len,e);
+            throw new ProtocolException("Protocol error: invlaid length " + len);
         }
         
         if(total > MAX_BULK_STRING_LENGTH){
-            throw new IOException(
+            throw new ProtocolException(
                 "PROTOCOL Error: bulk String length exceeds limit " + total
             );
         }
 
         if(total < -1){
-            throw new IOException(
+            throw new ProtocolException(
                 "PROTOCOL Error: bulk String length is invalid " + total
             );
         }
@@ -112,7 +114,7 @@ public class RespReader {
         int cr = in.read();
         int lf = in.read();
         if(cr != '\r' || lf != '\n'){
-            throw new IOException("ERR UnKnown Pattern: Expected CRLF after length of Bulk String, got \" + cr + \"  \" + lf");
+            throw new ProtocolException("ERR UnKnown Pattern: Expected CRLF after length of Bulk String, got \" + cr + \"  \" + lf");
         }
 
         // for(int i = 0; i<total; i++){
@@ -138,7 +140,7 @@ public class RespReader {
         cr = in.read();
         lf = in.read();
         if(cr != '\r' || lf != '\n'){
-            throw new IOException("ERR UnKnown Pattern: Expected CRLF after Bulk String, got " + cr + "  " + lf);
+            throw new ProtocolException("ERR UnKnown Pattern: Expected CRLF after Bulk String, got " + cr + "  " + lf);
         }
 
         return sb.toString();
