@@ -1,6 +1,7 @@
 package com.miniredis.resp;
 
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -25,11 +26,11 @@ public class RespReader {
             case -1:
                 return null;
             default:
-                throw new IOException();
+                throw new IOException("ERR Unknown Pattern.");
         }
     }
 
-    public List<String> handleArrays() throws IOException{
+    public List<String> handleArrays() throws IOException,EOFException{
         List<String> result = new ArrayList<>();
         int total = Integer.parseInt(Character.toString(in.read()));
         
@@ -49,8 +50,10 @@ public class RespReader {
                 case '$':
                     result.add(handleBulkString());
                     break;
+                case -1:
+                    throw new EOFException();
                 default:
-                    throw new IOException();
+                    throw new IOException("ERR Unknown Pattern.");
             } 
         }
         
@@ -63,7 +66,7 @@ public class RespReader {
         return result;    
     }
 
-    public String handleBulkString() throws IOException{
+    public String handleBulkString() throws IOException,EOFException{
         StringBuilder sb = new StringBuilder();
         int total = Integer.parseInt(Character.toString(in.read()));
         
@@ -76,7 +79,7 @@ public class RespReader {
         for(int i = 0; i<total; i++){
             int cur = in.read();
             if (cur == -1){
-                throw new IOException();
+                throw new EOFException();
             }
 
             sb.append(Character.toString(cur));
