@@ -1,11 +1,12 @@
 package com.miniredis.server;
 
-import java.io.EOFException;
 import java.io.IOException;
+import java.net.ProtocolException;
 import java.net.Socket;
 import java.util.List;
 
 import com.miniredis.commands.CommandRouter;
+import com.miniredis.resp.ErrorString;
 import com.miniredis.resp.RespReader;
 import com.miniredis.resp.RespWriter;
 import com.miniredis.resp.Response;
@@ -32,6 +33,14 @@ public class ClientHandler {
                 writer.write(res);
             }
             System.out.println("Server: Client Disconnected gracefully.");
+        }catch (ProtocolException e){
+            System.out.println("Server: " + e.getMessage() + ". Closing Connection.");
+            try{
+                writer.write(new ErrorString(e.getMessage() + ". Closing Connection."));
+                client.close();
+            }catch (Exception ignore){
+                
+            }   
         }
         catch (IOException e){
             System.out.println("Server: Client Disconnected abruptly: " + e.getMessage());
