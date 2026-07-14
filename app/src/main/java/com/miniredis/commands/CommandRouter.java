@@ -42,6 +42,38 @@ public class CommandRouter {
         return new BulkString(val);
     }
 
+    private Response handleDel(List<String> cmds){
+        if(cmds.size() != 2){
+            return new ErrorString("Err Del Command only takes 1 arguments");
+        }
+        String key = cmds.get(1);
+        if(key.length() == 0){
+            return new ErrorString("Err Key cannot be empty");
+        }
+        boolean val = store.del(key);
+
+        if(val){
+            return new RespInteger(1);
+        }
+        return new RespInteger(0);
+    }
+
+    private Response handleExists(List<String> cmds){
+        if(cmds.size() != 2){
+            return new ErrorString("Err Del Command only takes 1 arguments");
+        }
+        String key = cmds.get(1);
+        if(key.length() == 0){
+            return new ErrorString("Err Key cannot be empty");
+        }
+        boolean val = store.exists(key);
+
+        if(val){
+            return new RespInteger(1);
+        }
+        return new RespInteger(0);
+    }
+
 
     public Response handle(List<String> cmds){
 
@@ -53,6 +85,8 @@ public class CommandRouter {
         return switch(cmd){
             case "SET" -> handleSet(cmds);
             case "GET" -> handleGet(cmds);
+            case "DEL" -> handleDel(cmds);
+            case "EXISTS" -> handleExists(cmds);
             case "PING" -> new SimpleString("PONG");
             default     -> new ErrorString("ERR unknown Command '" + cmd + "'"); 
         };
