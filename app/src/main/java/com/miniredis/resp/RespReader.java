@@ -35,7 +35,14 @@ public class RespReader {
 
     public List<String> handleArrays() throws IOException,EOFException{
         List<String> result = new ArrayList<>();
-        int total = Integer.parseInt(Character.toString(in.read()));
+        String len = readLength();
+        int total;
+        try{
+            total = Integer.parseInt(len);
+        }catch(NumberFormatException e){
+            throw new IOException("Protocol error: invlaid length " + len,e);
+        }
+
         if(total > MAX_ARRAY_LENGTH){
             throw new IOException(
                 "PROTOCOL Error: Array length exceeds limit."
@@ -81,7 +88,14 @@ public class RespReader {
 
     public String handleBulkString() throws IOException,EOFException{
         StringBuilder sb = new StringBuilder();
-        int total = Integer.parseInt(Character.toString(in.read()));
+
+        String len = readLength();
+        int total;
+        try{
+            total = Integer.parseInt(len);
+        }catch(NumberFormatException e){
+            throw new IOException("Protocol error: invlaid length " + len,e);
+        }
         
         if(total > MAX_BULK_STRING_LENGTH){
             throw new IOException(
@@ -96,7 +110,7 @@ public class RespReader {
         }
 
         
-        
+
         int cr = in.read();
         int lf = in.read();
         if(cr != '\r' || lf != '\n'){
@@ -118,6 +132,21 @@ public class RespReader {
             throw new IOException("ERR UnKnown Pattern.");
         }
 
+        return sb.toString();
+    }
+
+    private String readLength() throws IOException{
+        StringBuilder sb = new StringBuilder();
+        int b1 = in.read();
+        int b2 = in.read();
+        while(true){
+            if(b1 == '\r' && b2 == '\n'){
+                break;
+            }
+            sb.append(b1);
+            b1 = b2;
+            b2 = in.read();
+        }
         return sb.toString();
     }
 
