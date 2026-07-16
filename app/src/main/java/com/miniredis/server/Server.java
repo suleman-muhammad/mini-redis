@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import com.miniredis.commands.CommandRouter;
 
@@ -37,6 +38,20 @@ public class Server {
         }finally{
             es.shutdownNow();
             System.out.println("Server: Shut down Complete.");
+        }
+    }
+
+
+    private void shutdown(){
+        System.out.println("Server: Shutting down......");
+        es.shutdown();
+        try{
+            if(!es.awaitTermination(10, TimeUnit.SECONDS)){
+                es.shutdownNow();
+            }
+        }catch (InterruptedException e){
+            es.shutdownNow();
+            Thread.currentThread().interrupt();
         }
     }
 }
