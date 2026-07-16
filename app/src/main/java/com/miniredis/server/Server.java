@@ -20,7 +20,10 @@ public class Server {
     public Server(int port,CommandRouter cr){
         this.port = port;
         this.cr = cr;
-        es = Executors.newFixedThreadPool(50);
+        int cores = Runtime.getRuntime().availableProcessors();
+        int pools = cores * 2;
+        es = Executors.newFixedThreadPool(pools);
+        
     }
 
     public void start(){
@@ -29,7 +32,6 @@ public class Server {
         try(ServerSocket miniServer = new ServerSocket(this.port)){
             System.out.println("Server: Started at Port " + this.port);
             while(isRunning){
-                
                 try{
                     Socket client = miniServer.accept();
                     ClientHandler handler = new ClientHandler(client,cr);
@@ -45,6 +47,7 @@ public class Server {
 
 
     private void shutdown(){
+        isRunning = false;
         System.out.println("Server: Shutting down......");
         es.shutdown();
         try{
