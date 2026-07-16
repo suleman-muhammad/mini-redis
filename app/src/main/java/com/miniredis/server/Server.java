@@ -54,4 +54,8 @@ public class Server {
             Thread.currentThread().interrupt();
         }
     }
+
+    private void registerShutdown(){
+        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
+    }
 }
