@@ -1,12 +1,12 @@
 package com.miniredis.data;
 
 import java.util.Map;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Store {
-    private Map<String,String> data;
+    private final Map<String,String> data;
     public Store(){
-        data = new HashMap<>();
+        data = new ConcurrentHashMap<>();
     }
     public void set(String key, String val){
         data.put(key, val);
