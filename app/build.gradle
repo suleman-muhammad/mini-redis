@@ -37,6 +37,10 @@ application {
     mainClass = 'com.miniredis.Main'
 }
 
+run {
+    standardInput = System.in
+}
+
 tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()

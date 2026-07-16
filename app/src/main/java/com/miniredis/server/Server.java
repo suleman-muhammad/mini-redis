@@ -49,6 +49,7 @@ public class Server {
     private void shutdown(){
         isRunning = false;
         System.out.println("Server: Shutting down......");
+        System.out.flush();
         es.shutdown();
         try{
             if(!es.awaitTermination(10, TimeUnit.SECONDS)){
