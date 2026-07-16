@@ -22,6 +22,8 @@ public class Server {
     }
 
     public void start(){
+        registerShutdown();
+        
         try(ServerSocket miniServer = new ServerSocket(this.port)){
             System.out.println("Server: Started at Port " + this.port);
             while(true){
