@@ -74,6 +74,23 @@ public class CommandRouter {
         return new RespInteger(0);
     }
 
+    private Response handleTTL(List<String> cmds){
+        if(cmds.size() != 3){
+            return new ErrorString("Err TTL Command only takes 2 arguments");
+        }
+        String key = cmds.get(1);
+        if(key.length() == 0){
+            return new ErrorString("Err Key cannot be empty");
+        }
+        
+        boolean val = store.exists(key);
+
+        if(val){
+            return new RespInteger(1);
+        }
+        return new RespInteger(0);
+    }
+
 
     public Response handle(List<String> cmds){
 
@@ -88,6 +105,7 @@ public class CommandRouter {
             case "DEL" -> handleDel(cmds);
             case "EXISTS" -> handleExists(cmds);
             case "PING" -> new SimpleString("PONG");
+            case "TTL" -> handleTTL(cmds);
             default     -> new ErrorString("ERR unknown Command '" + cmd + "'"); 
         };
     }
