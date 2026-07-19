@@ -14,8 +14,11 @@ public class Store {
     }
 
     public String get(String key){
-        
-        return data.getOrDefault(key,null);
+        Value v = data.computeIfPresent(key, (k,current) -> 
+            current.isExpired() ? null : current
+        );
+
+        return v == null ? null : v.val();
     }
 
     public boolean del(String key){
