@@ -35,4 +35,10 @@ public class Store {
         );
         return v != null;
     }
+    public long ttl(String key){
+        Value v = data.compute(key, (k,curr) ->
+            curr
+        );
+        return v == null ? -1 : ((v.expiresAtMillis() - System.currentTimeMillis())/1000);
+    }
 }
