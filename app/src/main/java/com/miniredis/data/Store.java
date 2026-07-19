@@ -39,6 +39,8 @@ public class Store {
         Value v = data.compute(key, (k,curr) ->
             curr
         );
-        return v == null ? -1 : ((v.expiresAtMillis() - System.currentTimeMillis())/1000);
+        if(v == null) return -1;
+        if(v.expiresAtMillis() == 0) return 0;
+        return ((v.expiresAtMillis() - System.currentTimeMillis())/1000);
     }
 }
