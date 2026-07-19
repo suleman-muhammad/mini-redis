@@ -28,4 +28,11 @@ public class Store {
     public boolean exists(String key){
         return data.containsKey(key);
     }
+
+    public boolean expire(String key,long t){
+        Value v = data.computeIfPresent(key, (k,curr) ->
+            new Value(curr.val(),t)
+        );
+        return v != null;
+    }
 }
