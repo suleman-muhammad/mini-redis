@@ -27,11 +27,16 @@ public class CommandRouter {
             if(cmds.get(3).toLowerCase() != "ex"){
                 return new ErrorString("ERR unknown Command: '" + cmds.get(3) + "'");
             }
-            int t = Integer.parseInt(cmds.getLast());
-            if(t <= 0){
-                store.del(key); // del if already exits, dont care about the return value.
+            try{
+                long t = Long.parseLong(cmds.getLast());
+                if(t <= 0){
+                    return new ErrorString("ERR invalid expire time in 'set' command"); 
+                }
+                store.set(key, val, t);
+            }catch(NumberFormatException e){
+                return new ErrorString("ERR TTL Value is not an integer.");
             }
-            store.set(key, val, t);
+
         }else
             store.set(key, val,0);
         return new SimpleString("OK");
@@ -98,6 +103,29 @@ public class CommandRouter {
         if(val){
             return new RespInteger(1);
         }
+        return new RespInteger(0);
+    }
+
+    private Response handleExpire(List<String> cmds){
+        if(cmds.size() != 3){
+            return new ErrorString("Err 'EXPIRE' Command only takes 2 arguments");
+        }
+        
+        String key = cmds.get(1);
+        if(key.length() == 0){
+            return new ErrorString("Err Key cannot be empty");
+        }
+
+        if(!store.exists(key)){
+            return new RespInteger(0);
+        }
+        
+        int t = Integer.parseInt(cmds.getLast());
+        if(t <= 0){
+            store.del(key); // del if already exits, dont care about the return value.
+        }
+
+        
         return new RespInteger(0);
     }
 
