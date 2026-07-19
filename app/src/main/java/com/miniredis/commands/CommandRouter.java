@@ -14,7 +14,7 @@ public class CommandRouter {
     }
 
     public Response handleSet(List<String> cmds){
-        if(cmds.size() != 3){
+        if(cmds.size() != 3 || cmds.size() != 5){
             return new ErrorString("Err Set Command only takes 2 arguments.");
         }
         String key = cmds.get(1);
@@ -23,7 +23,17 @@ public class CommandRouter {
             return new ErrorString("Err Key or value cannot be empty.");
         }
 
-        store.set(key, val);
+        if(cmds.size() > 3){
+            if(cmds.get(3).toLowerCase() != "ex"){
+                return new ErrorString("ERR unknown Command: '" + cmds.get(3) + "'");
+            }
+            int t = Integer.parseInt(cmds.getLast());
+            if(t <= 0){
+                store.del(key); // del if already exits, dont care about the return value.
+            }
+            store.set(key, val, t);
+        }else
+            store.set(key, val,0);
         return new SimpleString("OK");
     }
 
