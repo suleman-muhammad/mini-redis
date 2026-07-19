@@ -112,21 +112,28 @@ public class CommandRouter {
         }
         
         String key = cmds.get(1);
+
         if(key.length() == 0){
             return new ErrorString("Err Key cannot be empty");
         }
 
-        if(!store.exists(key)){
-            return new RespInteger(0);
-        }
         
-        int t = Integer.parseInt(cmds.getLast());
-        if(t <= 0){
-            store.del(key); // del if already exits, dont care about the return value.
+        long t;
+        try{
+            t = Long.parseLong(cmds.getLast());
+        }
+        catch (NumberFormatException e){
+            return new ErrorString("ERR TTL Value is not an integer.");
         }
 
+        if(t <= 0){
+            return new RespInteger(store.del(key) ? 1 : 0); // del if already exits, dont care about the return value.
+        }
+
+        long expiresAt = System.currentTimeMillis() + (t * 1000);
+
         
-        return new RespInteger(0);
+        return new RespInteger(store.expire(key,expiresAt) ? 1 : 0);
     }
 
 
