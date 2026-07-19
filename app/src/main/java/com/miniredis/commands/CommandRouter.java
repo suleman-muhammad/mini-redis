@@ -14,8 +14,8 @@ public class CommandRouter {
     }
 
     public Response handleSet(List<String> cmds){
-        if(cmds.size() != 3 || cmds.size() != 5){
-            return new ErrorString("Err Set Command only takes 2 arguments.");
+        if(cmds.size() != 3 && cmds.size() != 5){
+            return new ErrorString("Err Set Command only takes 2 arguments and optional(expiry seconds followed by 'ex').");
         }
         String key = cmds.get(1);
         String val = cmds.get(2);
@@ -24,7 +24,7 @@ public class CommandRouter {
         }
 
         if(cmds.size() > 3){
-            if(cmds.get(3).toLowerCase() != "ex"){
+            if(!cmds.get(3).toLowerCase().equals("ex")){
                 return new ErrorString("ERR unknown Command: '" + cmds.get(3) + "'");
             }
             try{
@@ -127,7 +127,7 @@ public class CommandRouter {
         }
 
         if(t <= 0){
-            return new RespInteger(store.del(key) ? 1 : 0); // del if already exits, dont care about the return value.
+            return new RespInteger(store.del(key) ? 1 : 0); // del if already exits
         }
 
         long expiresAt = System.currentTimeMillis() + (t * 1000);
@@ -151,6 +151,7 @@ public class CommandRouter {
             case "EXISTS" -> handleExists(cmds);
             case "PING" -> new SimpleString("PONG");
             case "TTL" -> handleTTL(cmds);
+            case "EXPIRE" -> handleExpire(cmds);
             default     -> new ErrorString("ERR unknown Command '" + cmd + "'"); 
         };
     }
