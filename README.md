@@ -6,9 +6,9 @@ An educational, from-scratch implementation of a Redis-compatible server in Java
 
 ## Demo
 
-![Demo](mini_redis_first_look.gif)
-![redis-cli screenshot](client_ss.png)
-![Server screenshot](server_ss.png)
+![Demo](docs/mini_redis_first_look.gif)
+![redis-cli screenshot](docs/client_ss.png)
+![Server screenshot](docs/server_ss.png)
 
 
 ## What it does
