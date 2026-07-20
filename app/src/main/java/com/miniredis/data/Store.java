@@ -43,4 +43,18 @@ public class Store {
         if(v.expiresAtMillis() == 0) return 0;
         return ((v.expiresAtMillis() - System.currentTimeMillis())/1000);
     }
+
+    public int persist(String key){
+        boolean[] exists = {true};
+        Value v = data.computeIfPresent(key, (k,curr) -> {
+                if(curr.expiresAtMillis() != 0){
+                    exists[0] = false;
+                    return new Value(curr.val(),0);
+                }
+                return curr;
+            }
+        );
+        if(v == null || exists[0]) return 0;
+        return 1;
+    }
 }
