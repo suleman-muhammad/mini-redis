@@ -137,6 +137,19 @@ public class CommandRouter {
         return new RespInteger(store.expire(key,expiresAt) ? 1 : 0);
     }
 
+    private Response handlePersist(List<String> cmds){
+        if(cmds.size() != 2){
+            return new ErrorString("Err Persist Command only takes 1 arguments");
+        }
+        String key = cmds.get(1);
+        if(key.length() == 0){
+            return new ErrorString("Err Key cannot be empty");
+        }
+        
+        return new RespInteger(store.persist(key));
+
+    }
+
 
     public Response handle(List<String> cmds){
 
@@ -153,6 +166,7 @@ public class CommandRouter {
             case "PING" -> new SimpleString("PONG");
             case "TTL" -> handleTTL(cmds);
             case "EXPIRE" -> handleExpire(cmds);
+            case "PERSIST" -> handlePersist(cmds);
             default     -> new ErrorString("ERR unknown Command '" + cmd + "'"); 
         };
     }
