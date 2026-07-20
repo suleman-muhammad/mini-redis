@@ -8,8 +8,15 @@ An educational, from-scratch implementation of a Redis-compatible server in Java
 > **Status:** Week 4 complete. Concurrent server with thread-pool client handling, thread-safe in-memory store, and key expiration with both lazy and active strategies.
  
 ## Demo
- 
+### First Look
 ![Demo First Look](docs/mini_redis_first_look.gif)
+
+### Concurrency
+![concurrency](docs/concurrency.gif)
+
+### Sweeper
+![sweeping](docs/sweeping.gif)
+### Some SS
 ![redis-cli screenshot](docs/client_ss.png)
 ![Server screenshot](docs/server_ss.png)
  
