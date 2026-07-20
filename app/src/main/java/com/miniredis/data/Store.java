@@ -2,11 +2,17 @@ package com.miniredis.data;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Store {
     private final Map<String,Value> data;
+    private final ScheduledExecutorService sweeperPool;
     public Store(){
         data = new ConcurrentHashMap<>();
+        sweeperPool = Executors.newSingleThreadScheduledExecutor();
     }
     public void set(String key, String val,long time){
         Value v = new Value(val,time);
@@ -56,5 +62,29 @@ public class Store {
         );
         if(v == null || exists[0]) return 0;
         return 1;
+    }
+
+    public void startSweeping(){
+        sweeperPool.scheduleAtFixedRate(this::sweep, 1, 1, TimeUnit.SECONDS);
+    }
+
+    private void sweep(){
+        int[] removed = {0};
+        for(String key : data.keySet()){
+            data.computeIfPresent(key, (k,v) ->
+                {
+                    if(v.isExpired()){
+                        removed[0]++;
+                        return null;
+                    }
+                    return v;
+                }
+            );
+        }
+        if(removed[0] > 0)System.out.println("Sweeper: removed " + removed[0] + " entries.");
+    }
+
+    public void stopSweeping(){
+        sweeperPool.shutdown();
     }
 }
