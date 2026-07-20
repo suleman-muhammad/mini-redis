@@ -170,4 +170,13 @@ public class CommandRouter {
             default     -> new ErrorString("ERR unknown Command '" + cmd + "'"); 
         };
     }
+
+
+    public void startSweeping(){
+        store.startSweeping();
+    }
+
+    public void stopSweeping(){
+        store.stopSweeping();
+    }
 }
