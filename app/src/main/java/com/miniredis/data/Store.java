@@ -69,19 +69,23 @@ public class Store {
     }
 
     private void sweep(){
-        int[] removed = {0};
-        for(String key : data.keySet()){
-            data.computeIfPresent(key, (k,v) ->
-                {
-                    if(v.isExpired()){
-                        removed[0]++;
-                        return null;
+        try{
+            int[] removed = {0};
+            for(String key : data.keySet()){
+                data.computeIfPresent(key, (k,v) ->
+                    {
+                        if(v.isExpired()){
+                            removed[0]++;
+                            return null;
+                        }
+                        return v;
                     }
-                    return v;
-                }
-            );
+                );
+            }
+            if(removed[0] > 0)System.out.println("Sweeper: removed " + removed[0] + " entries.");
+        }catch(Exception e){
+            System.err.println("Sweeper: Error in Sweeping.");
         }
-        if(removed[0] > 0)System.out.println("Sweeper: removed " + removed[0] + " entries.");
     }
 
     public void stopSweeping(){
