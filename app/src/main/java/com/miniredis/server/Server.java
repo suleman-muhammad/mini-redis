@@ -28,7 +28,7 @@ public class Server {
 
     public void start(){
         registerShutdown();
-
+        cr.startSweeping();
         try(ServerSocket miniServer = new ServerSocket(this.port)){
             System.out.println("Server: Started at Port " + this.port);
             while(isRunning){
@@ -47,6 +47,7 @@ public class Server {
 
 
     private void shutdown(){
+        cr.stopSweeping();
         isRunning = false;
         System.out.println("Server: Shutting down......");
         System.out.flush();
