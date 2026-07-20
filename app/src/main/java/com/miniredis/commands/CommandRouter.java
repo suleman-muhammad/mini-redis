@@ -32,7 +32,8 @@ public class CommandRouter {
                 if(t <= 0){
                     return new ErrorString("ERR invalid expire time in 'set' command"); 
                 }
-                store.set(key, val, t);
+                long expiresAt = System.currentTimeMillis() + (t * 1000);
+                store.set(key, val,expiresAt);
             }catch(NumberFormatException e){
                 return new ErrorString("ERR TTL Value is not an integer.");
             }
@@ -90,20 +91,20 @@ public class CommandRouter {
     }
 
     private Response handleTTL(List<String> cmds){
-        if(cmds.size() != 3){
-            return new ErrorString("Err TTL Command only takes 2 arguments");
+        if(cmds.size() != 2){
+            return new ErrorString("Err TTL Command only takes 1 arguments");
         }
         String key = cmds.get(1);
         if(key.length() == 0){
             return new ErrorString("Err Key cannot be empty");
         }
         
-        boolean val = store.exists(key);
+        long ttl = store.ttl(key);
 
-        if(val){
-            return new RespInteger(1);
-        }
-        return new RespInteger(0);
+        if(ttl == -1) return new RespInteger(-2);
+        if(ttl == 0) return new RespInteger(-1);
+        return new RespInteger((int) ttl);
+
     }
 
     private Response handleExpire(List<String> cmds){
