@@ -143,7 +143,34 @@ public class CommandRouter {
         long expiresAt = System.currentTimeMillis() + (t * 1000);
 
         
+      
         return new RespInteger(store.expire(key,expiresAt) ? 1 : 0);
+    }
+
+    private Response handleExpireAt(List<String> cmds){
+        if(cmds.size() != 3){
+            return new ErrorString("Err 'EXPIRE' Command only takes 2 arguments");
+        }
+        
+        String key = cmds.get(1);
+
+        if(key.length() == 0){
+            return new ErrorString("Err Key cannot be empty");
+        }
+
+        
+        long t;
+        try{
+            t = Long.parseLong(cmds.getLast());
+        }
+        catch (NumberFormatException e){
+            return new ErrorString("ERR TTL Value is not an integer.");
+        }
+
+        if(t <= 0){
+            return new RespInteger(store.del(key) ? 1 : 0); // del if already exits
+        }        
+        return new RespInteger(store.expire(key,t) ? 1 : 0);
     }
 
     private Response handlePersist(List<String> cmds){
@@ -176,6 +203,7 @@ public class CommandRouter {
             case "TTL" -> handleTTL(cmds);
             case "EXPIRE" -> handleExpire(cmds);
             case "PERSIST" -> handlePersist(cmds);
+            case "EXPIREAT" -> handleExpireAt(cmds);
             default     -> new ErrorString("ERR unknown Command '" + cmd + "'"); 
         };
 
@@ -211,7 +239,7 @@ public class CommandRouter {
             return cmds;
         }
 
-        if(cmds.getFirst().equalsIgnoreCase("expire")){
+        if(cmds.size() == 3 && cmds.getFirst().equalsIgnoreCase("expire")){
             long seconds = Long.parseLong(cmds.getLast());
             long absoluteMs = System.currentTimeMillis() + (seconds * 1000);
             return List.of("EXPIREAT", cmds.get(1), String.valueOf(absoluteMs));
