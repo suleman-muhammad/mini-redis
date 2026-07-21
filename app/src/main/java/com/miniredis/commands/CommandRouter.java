@@ -176,7 +176,7 @@ public class CommandRouter {
 
         if(toLog && LOG_COMMANDS.contains(cmd) && !(r instanceof ErrorString)){
             try{
-                aof.log(cmds);
+                aof.log(this.convertToAbsoluteExpiry(cmds));
             }catch(Exception e){
 
             }
@@ -195,7 +195,7 @@ public class CommandRouter {
     public void closeLogs(){
         this.aof.close();
     }
-    public List<String> convertToAbsoluteExpity(List<String> cmds){
+    public List<String> convertToAbsoluteExpiry(List<String> cmds){
         if(cmds.size() == 5 && cmds.get(3).equalsIgnoreCase("EX")){
             long seconds = Long.parseLong(cmds.getLast());
             long absoluteMs = System.currentTimeMillis() + (seconds * 1000);
@@ -205,11 +205,12 @@ public class CommandRouter {
             cmds.add(String.valueOf(absoluteMs));
             return cmds;
         }
-        
+
         if(cmds.getFirst().equalsIgnoreCase("expire")){
             long seconds = Long.parseLong(cmds.getLast());
             long absoluteMs = System.currentTimeMillis() + (seconds * 1000);
             return List.of("EXPIREAT", cmds.get(1), String.valueOf(absoluteMs));
         }
+        return cmds;
     }
 }
