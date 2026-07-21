@@ -2,7 +2,6 @@ package com.miniredis.data;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -32,7 +31,20 @@ public class Store {
     }
 
     public boolean exists(String key){
-        return data.containsKey(key);
+        int[] result = {0}; 
+        Value v = data.computeIfPresent(key, (k,val) ->
+            {
+                if(val.isExpired()){
+                    result[0] = 0;
+                    return null;
+                }else{
+                    result[0] = 1;
+                }
+                return val;
+            }
+        );
+
+        return result[0] == 1;
     }
 
     public boolean expire(String key,long t){
@@ -42,11 +54,16 @@ public class Store {
         return v != null;
     }
     public long ttl(String key){
-        Value v = data.compute(key, (k,curr) ->
-            curr
+        Value v = data.computeIfPresent(key, (k,curr) ->
+            {
+                if(curr.isExpired()){
+                    return null;
+                }
+                return curr;
+            }
         );
-        if(v == null) return -1;
-        if(v.expiresAtMillis() == 0) return 0;
+        if(v == null) return -2;
+        if(v.expiresAtMillis() == 0) return -1;
         return ((v.expiresAtMillis() - System.currentTimeMillis())/1000);
     }
 
