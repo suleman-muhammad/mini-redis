@@ -46,7 +46,7 @@ public class AofWriter {
             String line;
             while((line = bf.readLine()) != null){
                 List<String> cmds = Arrays.asList(line.split(" "));
-                cr.handle(cmds,true);
+                cr.handle(cmds,false);
             }
         }catch(IOException e){
             System.out.println("Writer: cannot Execute Reply.");
