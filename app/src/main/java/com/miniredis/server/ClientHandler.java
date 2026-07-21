@@ -29,7 +29,7 @@ public class ClientHandler {
         try{
             List<String> commands;
             while((commands = reader.readCommand()) != null){
-                Response res = cr.handle(commands);
+                Response res = cr.handle(commands,true);
                 writer.write(res);
             }
             System.out.println("Server: Client Disconnected gracefully.");
