@@ -76,7 +76,7 @@ public class CommandRouter {
 
     private Response handleExists(List<String> cmds){
         if(cmds.size() != 2){
-            return new ErrorString("Err Del Command only takes 1 arguments");
+            return new ErrorString("Err Exists Command only takes 1 arguments");
         }
         String key = cmds.get(1);
         if(key.length() == 0){
@@ -100,9 +100,6 @@ public class CommandRouter {
         }
         
         long ttl = store.ttl(key);
-
-        if(ttl == -1) return new RespInteger(-2);
-        if(ttl == 0) return new RespInteger(-1);
         return new RespInteger((int) ttl);
 
     }

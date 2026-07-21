@@ -49,7 +49,7 @@ public class Store {
 
     public boolean expire(String key,long t){
         Value v = data.computeIfPresent(key, (k,curr) ->
-            new Value(curr.val(),t)
+            curr.isExpired() ? null : new Value(curr.val(),t)
         );
         return v != null;
     }
@@ -68,17 +68,17 @@ public class Store {
     }
 
     public int persist(String key){
-        boolean[] exists = {true};
+        boolean[] hadttl = {false};
         Value v = data.computeIfPresent(key, (k,curr) -> {
                 if(curr.expiresAtMillis() != 0){
-                    exists[0] = false;
+                    hadttl[0] = true;
                     return new Value(curr.val(),0);
                 }
                 return curr;
             }
         );
-        if(v == null || exists[0]) return 0;
-        return 1;
+        if(v == null) return 0;
+        return hadttl[0] ? 1 : 0;
     }
 
     public void startSweeping(){
