@@ -192,4 +192,7 @@ public class CommandRouter {
     public void stopSweeping(){
         store.stopSweeping();
     }
+    public void closeLogs(){
+        this.aof.close();
+    }
 }
