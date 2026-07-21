@@ -39,4 +39,4 @@ app/bin/*
 
 *.class
 target/
-data/
+app/data/
