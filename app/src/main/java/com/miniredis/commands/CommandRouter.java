@@ -31,18 +31,23 @@ public class CommandRouter {
         }
 
         if(cmds.size() > 3){
-            if(!cmds.get(3).toLowerCase().equals("ex")){
-                return new ErrorString("ERR unknown Command: '" + cmds.get(3) + "'");
-            }
+            long t;
             try{
-                long t = Long.parseLong(cmds.getLast());
+                t = Long.parseLong(cmds.getLast());
+            }catch(NumberFormatException e){
+                return new ErrorString("ERR TTL Value is not an integer.");
+            }
+            if(cmds.get(3).toLowerCase().equalsIgnoreCase("ex")){
                 if(t <= 0){
                     return new ErrorString("ERR invalid expire time in 'set' command"); 
                 }
                 long expiresAt = System.currentTimeMillis() + (t * 1000);
                 store.set(key, val,expiresAt);
-            }catch(NumberFormatException e){
-                return new ErrorString("ERR TTL Value is not an integer.");
+            }else if(cmds.get(3).toLowerCase().equalsIgnoreCase("PXAT")){
+                long expiresAt = t;
+                store.set(key, val,expiresAt);
+            }else{
+                return new ErrorString("ERR unknown Command: '" + cmds.get(3) + "'");
             }
 
         }else
