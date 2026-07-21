@@ -1,16 +1,23 @@
 package com.miniredis.commands;
 
 import java.util.List;
+import java.util.Set;
 
 import com.miniredis.data.*;
+import com.miniredis.persistence.AofWriter;
 import com.miniredis.resp.*;
 
 public class CommandRouter {
-    
+    private static final Set<String> LOG_COMMANDS = Set.of("SET","DEL","EXPIRE","PERSIST");
     private final Store store;
+    private  AofWriter aof;
 
     public CommandRouter(Store store){
         this.store = store;
+    }
+
+    public void setAofWriter(AofWriter aof){
+        this.aof = aof;
     }
 
     public Response handleSet(List<String> cmds){
@@ -148,14 +155,14 @@ public class CommandRouter {
     }
 
 
-    public Response handle(List<String> cmds){
+    public Response handle(List<String> cmds,boolean toLog){
 
         if(cmds.isEmpty()){
             return new ErrorString("ERR Empty Command");
         }
 
         String cmd = cmds.getFirst().toUpperCase();
-        return switch(cmd){
+        Response r =  switch(cmd){
             case "SET" -> handleSet(cmds);
             case "GET" -> handleGet(cmds);
             case "DEL" -> handleDel(cmds);
@@ -166,6 +173,15 @@ public class CommandRouter {
             case "PERSIST" -> handlePersist(cmds);
             default     -> new ErrorString("ERR unknown Command '" + cmd + "'"); 
         };
+
+        if(toLog && LOG_COMMANDS.contains(cmd)){
+            try{
+                aof.log(cmds);
+            }catch(Exception e){
+
+            }
+        }
+        return r;
     }
 
 
