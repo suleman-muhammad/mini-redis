@@ -48,6 +48,7 @@ public class Server {
 
     private void shutdown(){
         cr.stopSweeping();
+        cr.closeLogs();
         isRunning = false;
         System.out.println("Server: Shutting down......");
         System.out.flush();
