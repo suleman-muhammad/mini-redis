@@ -174,7 +174,7 @@ public class CommandRouter {
             default     -> new ErrorString("ERR unknown Command '" + cmd + "'"); 
         };
 
-        if(toLog && LOG_COMMANDS.contains(cmd)){
+        if(toLog && LOG_COMMANDS.contains(cmd) && !(r instanceof ErrorString)){
             try{
                 aof.log(cmds);
             }catch(Exception e){
@@ -194,5 +194,22 @@ public class CommandRouter {
     }
     public void closeLogs(){
         this.aof.close();
+    }
+    public List<String> convertToAbsoluteExpity(List<String> cmds){
+        if(cmds.size() == 5 && cmds.get(3).equalsIgnoreCase("EX")){
+            long seconds = Long.parseLong(cmds.getLast());
+            long absoluteMs = System.currentTimeMillis() + (seconds * 1000);
+            cmds.removeLast();
+            cmds.removeLast();
+            cmds.add("PXAT");
+            cmds.add(String.valueOf(absoluteMs));
+            return cmds;
+        }
+        
+        if(cmds.getFirst().equalsIgnoreCase("expire")){
+            long seconds = Long.parseLong(cmds.getLast());
+            long absoluteMs = System.currentTimeMillis() + (seconds * 1000);
+            return List.of("EXPIREAT", cmds.get(1), String.valueOf(absoluteMs));
+        }
     }
 }
