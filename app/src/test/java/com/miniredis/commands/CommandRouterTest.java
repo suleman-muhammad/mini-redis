@@ -27,4 +27,13 @@ public class CommandRouterTest {
         assertInstanceOf(SimpleString.class, r);
         assertEquals("+PONG\r\n", r.getResponse());
     }
+
+    @Test
+    void testSet(){
+        Response r = router.handle(List.of("SET","foo","bar"),false);
+        assertInstanceOf(SimpleString.class, r);
+        assertEquals("+OK\r\n", r.getResponse());
+    }
+
+    
 }
