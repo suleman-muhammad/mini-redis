@@ -62,6 +62,14 @@ public class CommandRouterTest {
         assertEquals(":1\r\n", r.getResponse());
     }
 
+    @Test
+    void testTtl(){
+        Response r = router.handle(List.of("SET","foo","bar"),false);
+        r = router.handle(List.of("TTL","foo"), false);
+        assertInstanceOf(RespInteger.class, r);
+        assertEquals(":-1\r\n", r.getResponse());
+    }
+
 
 
 
