@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.miniredis.data.Store;
+import com.miniredis.resp.BulkString;
 import com.miniredis.resp.Response;
 import com.miniredis.resp.SimpleString;
 
@@ -35,5 +36,16 @@ public class CommandRouterTest {
         assertEquals("+OK\r\n", r.getResponse());
     }
 
+
+    @Test
+    void testGet(){
+        Response r = router.handle(List.of("SET","foo","bar"),false);
+        r = router.handle(List.of("GET","foo"), false);
+        assertInstanceOf(BulkString.class, r);
+        assertEquals("$3\r\nbar\r\n", r.getResponse());
+    }
+
     
+
+
 }
