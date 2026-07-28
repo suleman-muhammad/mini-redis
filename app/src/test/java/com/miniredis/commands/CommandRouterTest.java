@@ -3,6 +3,7 @@ package com.miniredis.commands;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
+import java.nio.channels.Pipe.SourceChannel;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import com.miniredis.data.Store;
 import com.miniredis.resp.BulkString;
 import com.miniredis.resp.ErrorString;
+import com.miniredis.resp.NullString;
 import com.miniredis.resp.RespInteger;
 import com.miniredis.resp.Response;
 import com.miniredis.resp.SimpleString;
@@ -77,7 +79,19 @@ public class CommandRouterTest {
         assertInstanceOf(ErrorString.class,r);
     }
 
+    @Test
+    void setWithTtlCaseTest(){
+        Response r = router.handle(List.of("Set","foo","bar","ex","5"), false);
+        assertInstanceOf(SimpleString.class,r);
+        try{
+            Thread.sleep(5000);
+        }catch (Exception e){
+            System.out.println("Test Failed.");
+        }
+        r = router.handle(List.of("Get","foo"), false);
+        assertInstanceOf(NullString.class, r);
+    }
 
-
+    
 
 }
