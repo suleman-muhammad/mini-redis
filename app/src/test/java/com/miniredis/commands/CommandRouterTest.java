@@ -80,7 +80,7 @@ public class CommandRouterTest {
     }
 
     @Test
-    void setWithTtlCaseTest(){
+    void setWithExCaseTest(){
         Response r = router.handle(List.of("Set","foo","bar","ex","5"), false);
         assertInstanceOf(SimpleString.class,r);
         try{
@@ -88,6 +88,23 @@ public class CommandRouterTest {
         }catch (Exception e){
             System.out.println("Test Failed.");
         }
+        r = router.handle(List.of("Get","foo"), false);
+        assertInstanceOf(NullString.class, r);
+    }
+
+    @Test
+    void setWithExpireCaseTest(){
+        Response r = router.handle(List.of("Set","foo","bar"), false);
+        assertInstanceOf(SimpleString.class,r);
+        r = router.handle(List.of("Expire","foo","5"), false);
+        assertInstanceOf(RespInteger.class,r);
+
+        try{
+            Thread.sleep(5000);
+        }catch (Exception e){
+            System.out.println("Test Failed.");
+        }
+        
         r = router.handle(List.of("Get","foo"), false);
         assertInstanceOf(NullString.class, r);
     }
