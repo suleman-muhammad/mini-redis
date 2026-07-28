@@ -93,6 +93,12 @@ public class CommandRouterTest {
     }
 
     @Test
+    void setWithNegativeExCaseTest(){
+        Response r = router.handle(List.of("Set","foo","bar","ex","-5"), false);
+        assertInstanceOf(ErrorString.class,r);
+    }
+
+    @Test
     void setWithExpireCaseTest(){
         Response r = router.handle(List.of("Set","foo","bar"), false);
         assertInstanceOf(SimpleString.class,r);
@@ -104,7 +110,7 @@ public class CommandRouterTest {
         }catch (Exception e){
             System.out.println("Test Failed.");
         }
-        
+
         r = router.handle(List.of("Get","foo"), false);
         assertInstanceOf(NullString.class, r);
     }
