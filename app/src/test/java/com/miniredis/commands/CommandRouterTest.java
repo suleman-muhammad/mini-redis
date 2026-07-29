@@ -115,6 +115,11 @@ public class CommandRouterTest {
         assertInstanceOf(NullString.class, r);
     }
 
-    
+    @Test
+    void ttlForNonExistKeyTest(){
+        Response r = router.handle(List.of("ttl","foo"), false);
+        assertInstanceOf(RespInteger.class,r);
+        assertEquals(":-2\r\n", r.getResponse());
+    }
 
 }
