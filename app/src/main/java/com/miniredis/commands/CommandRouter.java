@@ -8,7 +8,7 @@ import com.miniredis.persistence.AofWriter;
 import com.miniredis.resp.*;
 
 public class CommandRouter {
-    private static final Set<String> LOG_COMMANDS = Set.of("SET","DEL","EXPIRE","PERSIST");
+    private static final Set<String> LOG_COMMANDS = Set.of("SET","DEL","EXPIRE","PERSIST","INCR","INCRBY");
     private final Store store;
     private  AofWriter aof;
 
@@ -186,6 +186,49 @@ public class CommandRouter {
 
     }
 
+    public Response handleIncr(List<String> cmds){
+        if(cmds.size() != 2){
+            return new ErrorString("Err INCR Command only takes 1 arguments.");
+        }
+
+        String key = cmds.get(1);
+        if(key.length() == 0){
+            return new ErrorString("Err Key cannot be empty.");
+        }
+
+        try{
+           long newVal = store.incrBy(key, 1);
+           return new RespInteger(newVal);
+           
+        }catch (NumberFormatException e){
+            return new ErrorString("Err value assigned is not an Number.");
+        }catch (Exception e){
+            return new ErrorString("Err value assigned is not an Integer.");
+        }
+    }
+
+    public Response handleIncrBy(List<String> cmds){
+        if(cmds.size() != 3){
+            return new ErrorString("Err INCRBY Command only takes 2 arguments.");
+        }
+
+        String key = cmds.get(1);
+        if(key.length() == 0){
+            return new ErrorString("Err Key cannot be empty.");
+        }
+
+        try{
+            long delta = Long.parseLong(cmds.get(2));
+
+            
+            long newVal = store.incrBy(key, delta);
+            return new RespInteger(newVal);
+           
+        }catch (NumberFormatException e){
+            return new ErrorString("Err value assigned is not an Number.");
+        }
+    }
+
 
     public Response handle(List<String> cmds,boolean toLog){
 
@@ -204,6 +247,8 @@ public class CommandRouter {
             case "EXPIRE" -> handleExpire(cmds);
             case "PERSIST" -> handlePersist(cmds);
             case "EXPIREAT" -> handleExpireAt(cmds);
+            case "INCR" -> handleIncr(cmds);
+            case "INCRBY" -> handleIncrBy(cmds);
             default     -> new ErrorString("ERR unknown Command '" + cmd + "'"); 
         };
 
