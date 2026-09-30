@@ -40,3 +40,5 @@ app/bin/*
 *.class
 target/
 app/data/
+data/
+**/data/

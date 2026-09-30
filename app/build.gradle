@@ -37,20 +37,24 @@ application {
     mainClass = 'com.miniredis.Main'
 }
 
+tasks.withType(JavaCompile).configureEach {
+    options.fork = true
+    options.forkOptions.jvmArgs = ['-Xmx256m']
+}
+
 run {
     standardInput = System.in
+    jvmArgs = ['-Xmx256m']
 }
 
 jar {
-    manifest{
-        attributes 'Main-Class' : 'com.miniredis.Main'
+    manifest {
+        attributes 'Main-Class': 'com.miniredis.Main'
     }
 }
 
-tasks.named('test') {
-    // Use JUnit Platform for unit tests.
-    useJUnitPlatform()
-}
 test {
     useJUnitPlatform()
+    maxHeapSize = '256m'
 }
+
