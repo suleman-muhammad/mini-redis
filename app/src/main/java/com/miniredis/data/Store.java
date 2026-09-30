@@ -108,4 +108,20 @@ public class Store {
     public void stopSweeping(){
         sweeperPool.shutdown();
     }
+
+    public long incrBy(String key, long delta){
+        
+        Value updatedVal = data.compute(key, (k,v) ->{
+            if (v == null || v.isExpired()){
+                return  new Value(String.valueOf(delta), 0);
+            }
+
+            long currVal = Long.parseLong(v.val());
+            long newVal = Math.addExact(currVal, delta);
+            
+            return new Value(String.valueOf(newVal),v.expiresAtMillis());
+        });
+
+        return Long.parseLong(updatedVal.val());
+    }
 }
