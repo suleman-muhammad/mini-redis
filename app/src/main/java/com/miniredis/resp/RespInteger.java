@@ -2,7 +2,7 @@ package com.miniredis.resp;
 
 public class RespInteger extends Response{
 
-    public RespInteger(int val){
+    public RespInteger(long val){
         this.response = ":" + val + "\r\n";
     }
 
