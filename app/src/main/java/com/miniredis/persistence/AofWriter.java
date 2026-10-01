@@ -26,10 +26,7 @@ public class AofWriter {
     public synchronized void log(List<String> cmds){
         
         try{
-            for (String cmd : cmds){
-                fw.append(cmd);
-                fw.append(" ");
-            }
+            fw.append(String.join("\t", cmds));
             fw.append("\n");
             fw.flush();
         }catch (IOException e){
