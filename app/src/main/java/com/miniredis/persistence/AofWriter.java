@@ -52,7 +52,7 @@ public class AofWriter {
         try(BufferedReader bf = new BufferedReader(new FileReader(new File(FILE_PATH)))){
             String line;
             while((line = bf.readLine()) != null){
-                List<String> cmds = Arrays.asList(line.split(" "));
+                List<String> cmds = Arrays.asList(line.split("\t"));
                 cr.handle(cmds,false);
             }
             System.out.println("Writer: Replay Complete.");
