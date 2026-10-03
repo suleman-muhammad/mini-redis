@@ -8,7 +8,7 @@ import com.miniredis.persistence.AofWriter;
 import com.miniredis.resp.*;
 
 public class CommandRouter {
-    private static final Set<String> LOG_COMMANDS = Set.of("SET","DEL","EXPIRE","PERSIST","INCR","INCRBY","PTTL");
+    private static final Set<String> LOG_COMMANDS = Set.of("SET","DEL","EXPIRE","PERSIST","INCR","INCRBY","PTTL","PEXPIRE");
     private final Store store;
     private  AofWriter aof;
 
@@ -112,7 +112,7 @@ public class CommandRouter {
         }
         
         long ttl = store.ttl(key);
-        return new RespInteger((int) ttl);
+        return new RespInteger(ttl);
 
     }
 
@@ -154,10 +154,14 @@ public class CommandRouter {
             return new RespInteger(store.del(key) ? 1 : 0); // del if already exits
         }
 
-        long expiresAt = System.currentTimeMillis() + (t * 1000);
 
-        
-      
+        long expiresAt;
+        if(cmds.getFirst().toUpperCase().equals("EXPIRE")){
+            expiresAt = System.currentTimeMillis() + (t * 1000);
+        }else{
+            expiresAt = System.currentTimeMillis() + (t);
+        }
+    
         return new RespInteger(store.expire(key,expiresAt) ? 1 : 0);
     }
 
@@ -264,6 +268,7 @@ public class CommandRouter {
             case "INCR" -> handleIncr(cmds);
             case "INCRBY" -> handleIncrBy(cmds);
             case "PTTL" -> handlePTTL(cmds);
+            case "PEXPIRE" -> handleExpire(cmds);
             default     -> new ErrorString("ERR unknown Command '" + cmd + "'"); 
         };
 
