@@ -67,6 +67,20 @@ public class Store {
         return ((v.expiresAtMillis() - System.currentTimeMillis())/1000);
     }
 
+    public long pttl(String key){
+        Value v = data.computeIfPresent(key, (k,curr) ->
+            {
+                if(curr.isExpired()){
+                    return null;
+                }
+                return curr;
+            }
+        );
+        if(v == null) return -2;
+        if(v.expiresAtMillis() == 0) return -1;
+        return ((v.expiresAtMillis() - System.currentTimeMillis()));
+    }
+
     public int persist(String key){
         boolean[] hadttl = {false};
         Value v = data.computeIfPresent(key, (k,curr) -> {
