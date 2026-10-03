@@ -8,7 +8,7 @@ import com.miniredis.persistence.AofWriter;
 import com.miniredis.resp.*;
 
 public class CommandRouter {
-    private static final Set<String> LOG_COMMANDS = Set.of("SET","DEL","EXPIRE","PERSIST","INCR","INCRBY");
+    private static final Set<String> LOG_COMMANDS = Set.of("SET","DEL","EXPIRE","PERSIST","INCR","INCRBY","PTTL");
     private final Store store;
     private  AofWriter aof;
 
@@ -113,6 +113,20 @@ public class CommandRouter {
         
         long ttl = store.ttl(key);
         return new RespInteger((int) ttl);
+
+    }
+
+    private Response handlePTTL(List<String> cmds){
+        if(cmds.size() != 2){
+            return new ErrorString("Err PTTL Command only takes 1 arguments");
+        }
+        String key = cmds.get(1);
+        if(key.length() == 0){
+            return new ErrorString("Err Key cannot be empty");
+        }
+        
+        long ttl = store.pttl(key);
+        return new RespInteger(ttl);
 
     }
 
@@ -249,6 +263,7 @@ public class CommandRouter {
             case "EXPIREAT" -> handleExpireAt(cmds);
             case "INCR" -> handleIncr(cmds);
             case "INCRBY" -> handleIncrBy(cmds);
+            case "PTTL" -> handlePTTL(cmds);
             default     -> new ErrorString("ERR unknown Command '" + cmd + "'"); 
         };
 
@@ -273,6 +288,7 @@ public class CommandRouter {
     public void closeLogs(){
         this.aof.close();
     }
+
     public List<String> convertToAbsoluteExpiry(List<String> cmds){
         if(cmds.size() == 5 && cmds.get(3).equalsIgnoreCase("EX")){
             long seconds = Long.parseLong(cmds.getLast());
