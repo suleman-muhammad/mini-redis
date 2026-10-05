@@ -21,6 +21,46 @@ public class Optimizer {
         this.logs = new HashMap<>();
     }
     
+    public void optimize(){
+        File f = new File(FILE_PATH);
+        if(!f.exists()){
+            System.out.println("Optimizer: No Logs Found to Optimize.");
+            return;
+        }
+
+        List<String> toLog = getOptimizedLogs();
+        boolean result = log(toLog);
+
+        if(!result){
+            System.out.println("OPtimizer: Error Optimizing.");
+            return ;
+        }
+
+        System.out.println("Optimizer: Optimization Successfull. You can work as you want.");
+    } 
+
+    private List<String> getOptimizedLogs(){
+        this.logs = new HashMap<>();
+
+        try(BufferedReader br = readFile()){
+            String log;
+            while((log = br.readLine()) != null){
+                handleCommand(log);
+            }
+            return new ArrayList<>(logs.values());
+
+        }catch (IOException e){
+            System.out.println("OPtimizer Reader: Error reading logs File. Exisiting Now.");
+        }catch (Exception e){
+            System.out.println("Optimizer Reader: Error Optimizing logs. Exiting Now.");
+        }
+        return null;
+    }
+
+    private BufferedReader readFile()throws Exception{
+        return new BufferedReader(new FileReader(FILE_PATH));
+    }
+
     private boolean log(List<String> toLog){
         try(FileWriter fw = new FileWriter(FILE_PATH)){
             fw.write("");
