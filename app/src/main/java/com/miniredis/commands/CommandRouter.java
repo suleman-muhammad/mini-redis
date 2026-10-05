@@ -8,7 +8,7 @@ import com.miniredis.persistence.AofWriter;
 import com.miniredis.resp.*;
 
 public class CommandRouter {
-    private static final Set<String> LOG_COMMANDS = Set.of("SET","DEL","EXPIRE","PERSIST","INCR","INCRBY","PTTL","PEXPIRE");
+    private static final Set<String> LOG_COMMANDS = Set.of("SET","DEL","EXPIRE","PERSIST","INCR","INCRBY","PEXPIRE");
     private final Store store;
     private  AofWriter aof;
 
@@ -274,7 +274,7 @@ public class CommandRouter {
 
         if(toLog && LOG_COMMANDS.contains(cmd) && !(r instanceof ErrorString)){
             try{
-                aof.log(this.convertToAbsoluteExpiry(cmds));
+                aof.log(this.convertToLogableCommand(cmds));
             }catch(Exception e){
 
             }
@@ -294,7 +294,7 @@ public class CommandRouter {
         this.aof.close();
     }
 
-    public List<String> convertToAbsoluteExpiry(List<String> cmds){
+    public List<String> convertToLogableCommand(List<String> cmds){
         if(cmds.size() == 5 && cmds.get(3).equalsIgnoreCase("EX")){
             long seconds = Long.parseLong(cmds.getLast());
             long absoluteMs = System.currentTimeMillis() + (seconds * 1000);
@@ -309,6 +309,13 @@ public class CommandRouter {
             long seconds = Long.parseLong(cmds.getLast());
             long absoluteMs = System.currentTimeMillis() + (seconds * 1000);
             return List.of("EXPIREAT", cmds.get(1), String.valueOf(absoluteMs));
+        }
+
+        if(cmds.size() == 2 && cmds.getFirst().toLowerCase().equals("incr")){
+            cmds.removeFirst();
+            cmds.addFirst("INCRBY");
+            cmds.addLast("1");
+            return cmds;
         }
         return cmds;
     }
