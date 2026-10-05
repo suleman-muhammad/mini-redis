@@ -3,6 +3,7 @@ package com.miniredis;
 import com.miniredis.commands.CommandRouter;
 import com.miniredis.data.Store;
 import com.miniredis.persistence.AofWriter;
+import com.miniredis.persistence.Optimizer;
 import com.miniredis.server.Server;
 
 public class Main {
@@ -10,6 +11,7 @@ public class Main {
         Store store = new Store();
         
         CommandRouter router = new CommandRouter(store);
+        Optimizer.optimizeLogs();
         AofWriter.replay(router);
         AofWriter aof = new AofWriter();
         router.setAofWriter(aof);
