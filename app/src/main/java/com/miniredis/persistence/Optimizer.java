@@ -20,6 +20,11 @@ public class Optimizer {
     public Optimizer(){
         this.logs = new HashMap<>();
     }
+
+    public static void optimizeLogs(){
+        Optimizer op = new Optimizer();
+        op.optimize();
+    }
     
     public void optimize(){
         File f = new File(FILE_PATH);
