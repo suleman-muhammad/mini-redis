@@ -20,7 +20,23 @@ public class Optimizer {
     public Optimizer(){
         this.logs = new HashMap<>();
     }
-  
+    
+    private boolean log(List<String> toLog){
+        try(FileWriter fw = new FileWriter(FILE_PATH)){
+            fw.write("");
+            for (String line : toLog){
+                fw.write(line + "\n");
+            }
+
+            return true;
+        }catch (IOException e){
+            System.out.println("Optimize Writer: Error Opening File for writing.");
+            return  false;
+        }catch (Exception e){
+            System.out.println("optimize Writer: Error Writing to File.");
+            return  false;
+        }
+    }
     
     private void handleCommand(String log){
 
