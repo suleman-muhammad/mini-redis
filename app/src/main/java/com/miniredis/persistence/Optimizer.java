@@ -20,6 +20,38 @@ public class Optimizer {
     public Optimizer(){
         this.logs = new HashMap<>();
     }
+  
+    
+    private void handleCommand(String log){
+
+        if(log.isEmpty()){
+            return;
+        }
+        String[] parts = log.split("\t");
+        String cmd = extractCommand(parts);
+        switch (cmd.toLowerCase()) {
+            case "set":
+                handleSet(parts);
+                break;
+            case "incrby":
+                handleIncrby(parts);
+                break;
+            case "expireat":
+            case "expire":
+            case "pexpire":
+                handleExpire(parts);
+                break;
+            case "persist":
+                handlePersist(parts);
+                break;
+            case "del":
+                handleDel(parts);
+                break;
+            default:
+                break;
+        }
+
+    }
 
     private void handleSet(String[] parts){
         String key = extractKey(parts);
