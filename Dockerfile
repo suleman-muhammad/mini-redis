@@ -3,7 +3,7 @@ FROM eclipse-temurin:21-jdk-alpine AS builder
 
 WORKDIR /workspace
 
-# Copy Gradle wrapper and configuration files first for caching
+# Copy Gradle wrapper and configuration files
 COPY gradlew settings.gradle gradle.properties ./
 COPY gradle ./gradle
 COPY app/build.gradle ./app/
@@ -14,11 +14,8 @@ RUN chmod +x ./gradlew
 # Copy source code and test files
 COPY app/src ./app/src
 
-# Run test suite - fails the Docker build immediately if any test breaks
-RUN ./gradlew :app:test --no-daemon
-
-# Build distribution only after tests pass
-RUN ./gradlew :app:installDist --no-daemon -x test
+# Run tests and build distribution in a single step with capped memory
+RUN ./gradlew :app:test :app:installDist --no-daemon -Dorg.gradle.jvmargs="-Xmx384m"
 
 # Stage 2: Minimal runtime image
 FROM eclipse-temurin:21-jre-alpine
@@ -41,4 +38,3 @@ VOLUME ["/app/data"]
 EXPOSE 6380
 
 ENTRYPOINT ["bin/app"]
-
