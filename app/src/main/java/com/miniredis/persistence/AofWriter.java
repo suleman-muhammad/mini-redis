@@ -44,11 +44,31 @@ public class AofWriter {
         }
     }
 
-    public synchronized void log(List<String> cmds){
+    public void log(List<String> cmds){
+        if(cmds.isEmpty()){
+            return;
+        }
+
         try{
-            fw.append(String.join("\t", cmds));
-            fw.append("\n");
-            fw.flush();
+            synchronized(this){
+                if(this.currentState == PersistenceState.OPTIMIZING){
+                    bakcupLogs.add(cmds);
+                    return;
+                }
+
+                fw.append(String.join("\t", cmds));
+                fw.append("\n");
+                fw.flush();
+
+                long logs = currLogs.addAndGet(1);
+
+                if(logs >= LOGS_LIMIT){
+                    optimizerService.execute(() ->{
+                        this.optimize();
+                    });
+                }
+            }
+
         }catch (IOException e){
             System.out.println("Writer: cannot write to Log file." + e.getMessage());
         }
