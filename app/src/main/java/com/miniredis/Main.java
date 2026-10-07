@@ -12,8 +12,8 @@ public class Main {
         
         CommandRouter router = new CommandRouter(store);
         Optimizer.optimizeLogs();
-        AofWriter.replay(router);
-        AofWriter aof = new AofWriter();
+        long logs = AofWriter.replay(router);
+        AofWriter aof = new AofWriter(logs);
         router.setAofWriter(aof);
         Server server = new Server(6380,router);
         server.start();
