@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,10 +15,14 @@ public class AofWriter {
     public static String FILE_PATH = "data/logs.txt";
     private FileWriter fw;
 
+    private List<String> bakcupLogs;
+
     public AofWriter(){
         try{
             new File(FILE_PATH).getParentFile().mkdirs();
             this.fw = new FileWriter(new File(FILE_PATH),true);
+            bakcupLogs = new ArrayList<>();
+            
         }catch (IOException e){
             System.out.println("Writer: error in Constructor." + e.getMessage());
         }
