@@ -20,9 +20,7 @@ public class Server {
     public Server(int port,CommandRouter cr){
         this.port = port;
         this.cr = cr;
-        int cores = Runtime.getRuntime().availableProcessors();
-        int pools = cores * 2;
-        es = Executors.newFixedThreadPool(pools);
+        es = Executors.newVirtualThreadPerTaskExecutor();
         
     }
 
