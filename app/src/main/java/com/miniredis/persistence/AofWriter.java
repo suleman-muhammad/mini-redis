@@ -54,12 +54,16 @@ public class AofWriter {
         }
     }
 
-    public void close(){
+    
+
+    public boolean close(){
         try{
             this.fw.close();
+            return true;
         }catch (IOException e){
             System.out.println("Writer: Error in closing the Log file." + e.getMessage());
         }
+        return false;
     }
 
     public static long replay(CommandRouter cr){
