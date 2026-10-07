@@ -54,7 +54,40 @@ public class AofWriter {
         }
     }
 
-    
+    public void optimize(){
+        boolean result;
+        synchronized(this){
+            this.currentState = PersistenceState.OPTIMIZING;
+            result = this.close();
+        }
+        
+        if(!result){
+            System.out.println("Writer : Cannot optimie cause FIle is open.");
+            return;
+        }else{
+            long logs = Optimizer.optimizeLogs();
+            currLogs.set(0);
+        }
+        
+        synchronized(this){
+            this.open();
+            this.currentState = PersistenceState.LOGGING;
+            try{
+                if(!bakcupLogs.isEmpty()){
+                    List<String> cmd;
+                    while((cmd = bakcupLogs.poll()) != null){
+                        fw.append(String.join("\t", cmd));
+                        fw.append("\n");
+                        fw.flush();
+                        currLogs.addAndGet(1);
+                    }
+                }
+            } catch (Exception e){
+                System.out.println("Error while Logging Backup Logs.");
+            }              
+        }
+       
+    }
 
     public boolean close(){
         try{
