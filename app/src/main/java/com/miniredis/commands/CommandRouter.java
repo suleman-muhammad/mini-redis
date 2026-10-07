@@ -291,7 +291,7 @@ public class CommandRouter {
         store.stopSweeping();
     }
     public void closeLogs(){
-        this.aof.close();
+        this.aof.shutdownWriter();
     }
 
     public List<String> convertToLogableCommand(List<String> cmds){
