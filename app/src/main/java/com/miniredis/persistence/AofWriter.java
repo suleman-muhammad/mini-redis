@@ -62,11 +62,12 @@ public class AofWriter {
         }
     }
 
-    public static void replay(CommandRouter cr){
+    public static long replay(CommandRouter cr){
+        long logsExecuted = 0;
         File f = new File(FILE_PATH);
         if(!f.exists()){
             System.out.println("Writer: No AOF file found Starting fresh.");
-            return;
+            return logsExecuted;
         }
 
         try(BufferedReader bf = new BufferedReader(new FileReader(new File(FILE_PATH)))){
@@ -74,12 +75,13 @@ public class AofWriter {
             while((line = bf.readLine()) != null){
                 List<String> cmds = Arrays.asList(line.split("\t"));
                 cr.handle(cmds,false);
+                logsExecuted++;
             }
             System.out.println("Writer: Replay Complete.");
         }catch(IOException e){
             System.out.println("Writer: cannot Execute Reply.");
         }
-        return;
+        return logsExecuted;
     }
 
 }
