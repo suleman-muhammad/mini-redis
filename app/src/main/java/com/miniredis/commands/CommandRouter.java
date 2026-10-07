@@ -305,9 +305,11 @@ public class CommandRouter {
             return cmds;
         }
 
-        if(cmds.size() == 3 && cmds.getFirst().equalsIgnoreCase("expire")){
+        String cmd = cmds.getFirst();
+        if(cmds.size() == 3 && cmd.equalsIgnoreCase("expire") || cmd.equalsIgnoreCase("pexpire")){
+            long multiplier = cmd.equalsIgnoreCase("expire") ? 1000L : 1L;
             long seconds = Long.parseLong(cmds.getLast());
-            long absoluteMs = System.currentTimeMillis() + (seconds * 1000);
+            long absoluteMs = System.currentTimeMillis() + (seconds * multiplier);
             return List.of("EXPIREAT", cmds.get(1), String.valueOf(absoluteMs));
         }
 
