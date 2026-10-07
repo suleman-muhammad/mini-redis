@@ -5,31 +5,46 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicLong;
 
 import com.miniredis.commands.CommandRouter;
 
 public class AofWriter {
     public static String FILE_PATH = "data/logs.txt";
+    public static final long LOGS_LIMIT = 100_000;
     private FileWriter fw;
+    private ConcurrentLinkedQueue<List<String>> bakcupLogs;
+    private volatile PersistenceState currentState;
+    private ExecutorService optimizerService;
+    private AtomicLong currLogs;
+    
+    public AofWriter(long currLogs){
+        if(this.open()){
+            bakcupLogs = new ConcurrentLinkedQueue<>();
+            currentState = PersistenceState.LOGGING; 
+            optimizerService = Executors.newSingleThreadExecutor();
+            this.currLogs = new AtomicLong(currLogs);
+        }
+    }
 
-    private List<String> bakcupLogs;
-
-    public AofWriter(){
+    public boolean open(){
         try{
             new File(FILE_PATH).getParentFile().mkdirs();
             this.fw = new FileWriter(new File(FILE_PATH),true);
-            bakcupLogs = new ArrayList<>();
+            return true;
             
         }catch (IOException e){
-            System.out.println("Writer: error in Constructor." + e.getMessage());
+            System.out.println("Writer: error in Opening File." + e.getMessage());
+            return false;
         }
     }
 
     public synchronized void log(List<String> cmds){
-        
         try{
             fw.append(String.join("\t", cmds));
             fw.append("\n");
@@ -64,7 +79,7 @@ public class AofWriter {
         }catch(IOException e){
             System.out.println("Writer: cannot Execute Reply.");
         }
-
+        return;
     }
 
 }
