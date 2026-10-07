@@ -13,7 +13,7 @@ import java.util.List;
 
 
 public class Optimizer {
-    private final String FILE_PATH = "data/commands.txt";
+    private final String FILE_PATH = "data/logs.txt";
 
     private Map<String,String> logs;
 
@@ -25,7 +25,7 @@ public class Optimizer {
         Optimizer op = new Optimizer();
         op.optimize();
     }
-    
+
     public void optimize(){
         File f = new File(FILE_PATH);
         if(!f.exists()){

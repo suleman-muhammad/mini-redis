@@ -11,7 +11,7 @@ import java.util.List;
 import com.miniredis.commands.CommandRouter;
 
 public class AofWriter {
-    public static String FILE_PATH = "data/commands.txt";
+    public static String FILE_PATH = "data/logs.txt";
     private FileWriter fw;
 
     public AofWriter(){
