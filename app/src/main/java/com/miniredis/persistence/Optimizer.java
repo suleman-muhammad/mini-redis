@@ -21,16 +21,16 @@ public class Optimizer {
         this.logs = new HashMap<>();
     }
 
-    public static void optimizeLogs(){
+    public static long optimizeLogs(){
         Optimizer op = new Optimizer();
-        op.optimize();
+        return op.optimize();
     }
 
-    public void optimize(){
+    public long optimize(){
         File f = new File(FILE_PATH);
         if(!f.exists()){
             System.out.println("Optimizer: No Logs Found to Optimize.");
-            return;
+            return 0;
         }
 
         List<String> toLog = getOptimizedLogs();
@@ -38,10 +38,11 @@ public class Optimizer {
 
         if(!result){
             System.out.println("OPtimizer: Error Optimizing.");
-            return ;
+            return 0;
         }
 
         System.out.println("Optimizer: Optimization Successfull. You can work as you want.");
+        return toLog.size();
     } 
 
     private List<String> getOptimizedLogs(){
