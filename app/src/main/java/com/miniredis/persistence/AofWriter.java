@@ -10,13 +10,14 @@ import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.miniredis.commands.CommandRouter;
 
 public class AofWriter {
     public static String FILE_PATH = "data/logs.txt";
-    public static final long LOGS_LIMIT = 100_000;
+    public static final long LOGS_LIMIT = 500_000;
     private FileWriter fw;
     private ConcurrentLinkedQueue<List<String>> bakcupLogs;
     private volatile PersistenceState currentState;
@@ -78,7 +79,7 @@ public class AofWriter {
         boolean result;
         synchronized(this){
             this.currentState = PersistenceState.OPTIMIZING;
-            result = this.close();
+            result = this.closeWriter();
         }
         
         if(!result){
@@ -86,7 +87,7 @@ public class AofWriter {
             return;
         }else{
             long logs = Optimizer.optimizeLogs();
-            currLogs.set(0);
+            currLogs.set(logs);
         }
         
         synchronized(this){
@@ -109,7 +110,17 @@ public class AofWriter {
        
     }
 
-    public boolean close(){
+    public void shutdownWriter(){
+        try{
+            this.closeWriter();
+            optimizerService.shutdown();
+            optimizerService.awaitTermination(10, TimeUnit.SECONDS);
+        }catch (Exception e){
+            System.out.println("Writer: Error while Shutting down.");
+        }
+    }
+
+    public boolean closeWriter(){
         try{
             this.fw.close();
             return true;
