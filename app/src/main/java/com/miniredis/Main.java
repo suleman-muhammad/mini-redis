@@ -8,6 +8,22 @@ import com.miniredis.server.Server;
 
 public class Main {
     public static void main(String[] args) {
+        int port = 6380;
+        String envPort = System.getenv("PORT");
+        if (envPort != null && !envPort.isBlank()) {
+            try {
+                port = Integer.parseInt(envPort.trim());
+            } catch (NumberFormatException e) {
+
+            }
+        } else if (args.length > 0) {
+            try {
+                port = Integer.parseInt(args[0].trim());
+            } catch (NumberFormatException e) {
+                
+            }
+        }
+
         Store store = new Store();
         
         CommandRouter router = new CommandRouter(store);
@@ -15,7 +31,7 @@ public class Main {
         long logs = AofWriter.replay(router);
         AofWriter aof = new AofWriter(logs);
         router.setAofWriter(aof);
-        Server server = new Server(6380,router);
+        Server server = new Server(port, router);
         server.start();
     }
 }

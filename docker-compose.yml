@@ -1,0 +1,16 @@
+services:
+  mini-redis:
+    build: .
+    container_name: mini-redis
+    restart: unless-stopped
+    ports:
+      - "6380:6380"
+    environment:
+      - PORT=6380
+      - JAVA_TOOL_OPTIONS=-Xmx256m
+    volumes:
+      - redis_data:/app/data
+
+volumes:
+  redis_data:
+
