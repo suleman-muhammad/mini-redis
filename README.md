@@ -186,11 +186,29 @@ Instead of naive `readLine()` string splitting (which breaks when payload string
 
 ## Building & Running
 
+### Option 1: Native Gradle
 ```bash
 ./gradlew build       # compile and assemble
 ./gradlew run         # boot the server on port 6380
-./gradlew test        # run test suite
+./gradlew test        # run automated unit & concurrency tests
 ```
+
+### Option 2: Docker & Docker Compose
+A multi-stage [`Dockerfile`](Dockerfile) runs the test gate before building a minimal unprivileged JRE container:
+
+```bash
+docker compose up -d --build
+```
+
+Persistent AOF logs are preserved across restarts via the `redis_data` volume.
+
+---
+
+## 🌐 Production Cloud Deployment
+The engine runs containerized in the cloud on Azure Linux:
+- **Host:** `miniredis.suleman.app`
+- **Port:** `6380` (TCP RESP)
+- **Paired HTTP Gateway:** [`mini-redis-gateway`](https://github.com/suleman-muhammad/mini-redis-api-gateway) via `https://api.miniredis.suleman.app`
 
 ---
 
